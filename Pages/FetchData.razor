@@ -21,6 +21,7 @@ else
             </tr>
         </thead>
         <tbody>
+            <tr> @print </tr>
             @foreach (var forecast in forecasts)
             {
                 <tr>
@@ -36,10 +37,11 @@ else
 
 @code {
     private WeatherForecast[] forecasts;
-
+    private String print;
     protected override async Task OnInitializedAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        print = "hello";
     }
 
     public class WeatherForecast
