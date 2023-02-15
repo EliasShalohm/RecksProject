@@ -1,1 +1,4 @@
-﻿
+﻿post to: "http://appl101.lsu.edu/booklet2.nsf/f5e6e50d1d1d05c4862584410071cd2e?CreateDocument"
+base url: 'http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm'
+
+not found url: "https://appl101.lsu.edu/booklet2.nsf/NoCourseDept?readform"
