@@ -1,0 +1,25 @@
+﻿@page "/classnav"
+@using ReckzWebservice.Backend;
+@using System.Diagnostics;
+
+<h3>Class Navigation</h3>
+<p>
+    <button @onclick="GetClassData">Do Some Funky Class Data Stuff</button>
+</p>
+
+
+@code { //HTTPS HTTP difference
+    private async Task GetClassData()
+    {
+        var values = new Dictionary<string, string> {
+            { "%%Surrogate_SemesterDesc","1"},
+            { "SemesterDesc", "Spring 2022" },
+            {"%%Surrogate_Department", "1"},
+            { "Department", "ACCOUNTING" }
+        };
+        FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+        HttpResponseMessage response = await Program.GetClient().PostAsync("https://appl101.lsu.edu/booklet2.nsf/f5e6e50d1d1d05c4862584410071cd2e?CreateDocument", content);
+        string pageHTMLData = await response.Content.ReadAsStringAsync();
+        Debug.WriteLine(pageHTMLData);
+    }
+}

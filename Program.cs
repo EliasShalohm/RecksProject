@@ -12,6 +12,12 @@ namespace ReckzWebservice
 {
     public class Program
     {
+        private static readonly HttpClient client = new HttpClient();
+        public static HttpClient GetClient()
+        {
+            return client;
+        }
+
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
