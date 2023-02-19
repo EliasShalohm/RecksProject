@@ -1,0 +1,17 @@
+﻿@page "/classdata"
+
+@using RecksWebservice.Data
+@inject ClassData ClassData
+
+<PageTitle>LSU Html Test</PageTitle>
+
+<p>@LsuHtmlData</p>
+
+@code {
+    private string LsuHtmlData = "loading...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        LsuHtmlData = "first line of HTML: " + await ClassData.GetClassData();       
+    }
+}
