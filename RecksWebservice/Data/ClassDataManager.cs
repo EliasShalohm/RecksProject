@@ -2,6 +2,25 @@ namespace RecksWebservice.Data
 {
 	public class ClassData
 	{
+		/// <summary>
+		/// Gets and returns public available semesters to the Booklet for user navigation.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<string>> GetSemesters()
+		{
+			var test = new List<string>();
+			return test;
+        }
+
+        /// <summary>
+        /// Gets and returns public available departments under a given semester to the Booklet for user navigation.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<string>> GetDepartments()
+        {
+            var test = new List<string>();
+            return test;
+        }
 
         public async Task<string> GetClassData(string Semester, string Department)
         {
@@ -27,6 +46,7 @@ namespace RecksWebservice.Data
 			// splits the HTML into an array of each line
 			string[] split = htmlData.Split("\n");
 
+			///May need adjustment to not just be the first line.
 			//return first line of html
 			await Task.Delay(0);
 			return split[1];
