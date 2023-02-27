@@ -1,0 +1,16 @@
+﻿* Add Dropdown of Available Classes (Field Specific)
+* Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)
+* Display "Classes added" list
+* Choose Semester -> Class -: (Queries) -> Display Available Classes & Sections Plus Etc. Details
+
+
+* New Page for Displaying A Live-Drawn Schedule
+	o Preview Schedule in Other Tab?
+		- Perhaps Preview is button to other tab for easy-access
+	o Have Schedule Display in Given Tab?
+
+* Improve Fetch Class Data
+	o Get all of (if possible) class' attributes.
+
+* Add a help button / page for user documentation
+* Link to original LSU for user convienence

@@ -1,0 +1,40 @@
+﻿@page "/booklet"
+@inject ClassData ClassData
+
+@using RecksWebservice.Data
+<PageTitle>LSU Booklet</PageTitle>
+
+<h1> WELCOME TO THE NEW LSU COURSE SCHEDULER</h1>
+<style> <!--Temporary-->
+	h1	{ 
+		font-size: 1.5em;
+		color: purple;
+		text-align: center;
+		}
+</style>
+
+<select name="semester" id="semester">
+    <option disabled selected>Semester</option>
+    
+</select>
+
+<div id="loader"></div>
+
+<select name="department" id="department">
+    <option disabled selected>Department</option>
+    
+</select>
+
+<p>@LsuHtmlData</p>
+
+@code {
+
+    private string LsuHtmlData = "Loading...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        LsuHtmlData = "First line of HTML: " + await ClassData.GetClassData();
+        
+    }
+
+}
