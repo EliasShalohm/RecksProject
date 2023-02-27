@@ -17,8 +17,8 @@ namespace RecksWebservice.Types
 
     public class Class
     {
-        private string _classID;
-        private int _section;
+        private string _classID = "";
+        private int _section = 0;
         private int _totalEnrollCount;
         private int _availableSlots;
         private List<Day> _days;

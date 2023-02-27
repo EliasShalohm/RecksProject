@@ -11,3 +11,6 @@
 
 * Improve Fetch Class Data
 	o Get all of (if possible) class' attributes.
+
+* Add a help button / page for user documentation
+* Link to original LSU for user convienence
