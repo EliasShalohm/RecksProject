@@ -1,0 +1,11 @@
+﻿body {
+    align-content: center;
+}
+.col-md-12 {
+    align-content: center;
+}
+h1 {
+    font-size: 1.5em;
+    color: purple;
+    text-align: center;
+}

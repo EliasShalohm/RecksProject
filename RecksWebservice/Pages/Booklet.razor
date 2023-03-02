@@ -1,40 +1,56 @@
-﻿@page "/booklet"
-@inject ClassData ClassData
-
+﻿@using Microsoft.AspNetCore;
 @using RecksWebservice.Data
+@inject ClassData ClassData
+<link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
+@page "/booklet"
 <PageTitle>LSU Booklet</PageTitle>
 
-<h1> WELCOME TO THE NEW LSU COURSE SCHEDULER</h1>
-<style> <!--Temporary-->
-	h1	{ 
-		font-size: 1.5em;
-		color: purple;
-		text-align: center;
-		}
-</style>
+<body>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div id="header-text" class="col-md-12">
+				<h1 class="text-center">
+					WELCOME TO THE NEW LSU BOOKLET
+				</h1>
+			</div>
+		</div>
+		<div id="booklet-info" class="row">
+			<div id="semesters" class="col-md-6">
+				<select name="semester" id="semester">
+					<option disabled selected>Semester</option>
+					@foreach (var semester in semesterList)
+					{
+						<option value="@semester.ToString()">@semester.ToString()</option>
+					}
+				</select>
+			</div>
+			<div id="departments" class="col-md-6">
+				<select name="department" id="department">
+					<option disabled selected>Department</option>
+					@foreach (var department in departmentList)
+					{
+						<option value="@department.ToString()">@department.ToString()</option>
+					}
+				</select>
+			</div>
+			<!--<div class="col-md-4">
+			</div>-->
+		</div>
+		<div class="row">
+			<div id="class-data" class="col-md-6">
+				<p>@LSUClassData</p>
+			</div>
+		</div>
+	</div>
 
-<select name="semester" id="semester">
-    <option disabled selected>Semester</option>
-    
-</select>
-
-<div id="loader"></div>
-
-<select name="department" id="department">
-    <option disabled selected>Department</option>
-    
-</select>
-
-<p>@LsuHtmlData</p>
+</body>
 
 @code {
+	private List<string> semesterList = new();
+	private List<string> departmentList = new();
+	private string LSUClassData = "Classes Display Below...";
 
-    private string LsuHtmlData = "Loading...";
 
-    protected override async Task OnInitializedAsync()
-    {
-        LsuHtmlData = "First line of HTML: " + await ClassData.GetClassData("Fall 2022","ACCOUNTING");
-        
-    }
 
 }
