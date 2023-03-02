@@ -17,7 +17,7 @@ namespace RecksWebservice.Data
 			HttpClient client = new HttpClient();
 			HttpResponseMessage response = await client.PostAsync("http://appl101.lsu.edu/booklet2.nsf/f5e6e50d1d1d05c4862584410071cd2e?CreateDocument", content);
 
-			string htmlData = await response.Content.ReadAsStringAsync();
+            string htmlData = await response.Content.ReadAsStringAsync();
 
 			int lastIndexOfUselessInformation = htmlData.LastIndexOf("--");
 
@@ -31,5 +31,40 @@ namespace RecksWebservice.Data
 			await Task.Delay(0);
 			return split[1];
 		}
-	}
+
+        public async Task<string> GetDepartments()
+        {
+
+            HttpClient client = new HttpClient();
+
+            // <select name="SemesterDesc">
+            // <select name="Department">
+
+            HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
+            string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
+
+            string manipulatedString = mainPageHtml;
+
+            await Task.Delay(0);
+            return manipulatedString;
+        }
+
+        public async Task<string> GetSemesters()
+        {
+
+            HttpClient client = new HttpClient();
+
+            // <select name="SemesterDesc">
+            // <select name="Department">
+
+            HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
+            string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
+
+            string manipulatedString = mainPageHtml;
+
+            await Task.Delay(0);
+            return manipulatedString;
+        }
+
+    }
 }
