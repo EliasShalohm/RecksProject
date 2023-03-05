@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore;
 @using RecksWebservice.Data
-@inject ClassData ClassData
+@inject ClassDataHandler classDataHandler
 <link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
 @page "/booklet"
 <PageTitle>LSU Booklet</PageTitle>
@@ -49,8 +49,14 @@
 @code {
 	private List<string> semesterList = new();
 	private List<string> departmentList = new();
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Run(() => classDataHandler.FillSemesters());
+		await Task.Run(() => classDataHandler.FillDepartments());
+		semesterList = classDataHandler.GetSemesters();
+		departmentList = classDataHandler.GetDepartments();
+	}
 	private string LSUClassData = "Classes Display Below...";
 
-
-
+	//After code block execution, semester & department lists should automatically fill themselves out accordingly.
 }

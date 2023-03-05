@@ -1,4 +1,7 @@
-﻿* Add Dropdown of Available Classes (Field Specific)
+﻿Implement GetSemester & GetDepartments
+
+
+* Add Dropdown of Available Classes (Field Specific)
 * Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)
 * Display "Classes added" list
 * Choose Semester -> Class -: (Queries) -> Display Available Classes & Sections Plus Etc. Details
@@ -39,3 +42,7 @@ for s in soup.select('[name="SemesterDesc"] [value]'):
 departments = []
 for d in soup.select('[name="Department"] option'):
     departments.append(d.get_text(strip=True))
+
+
+_________________________________________________________________________________________________________
+Upon further development, go back and test to see if "await Task.Delay(0);" lines are actually necessary.

@@ -1,8 +1,12 @@
+using System.Runtime.InteropServices;
+
 namespace RecksWebservice.Data
 {
-	public class ClassData
+	public class ClassDataHandler
 	{
-        public async Task<string> GetClassData(string Semester, string Department)
+		private List<string> semesterList = new();
+		private List<string> departmentList = new();
+		public async Task<string> GetClassData(string Semester, string Department)
         {
             var values = new Dictionary<string, string>
             {
@@ -32,7 +36,29 @@ namespace RecksWebservice.Data
 			return split[1];
 		}
 
-        public async Task<string> GetDepartments()
+		public async Task FillSemesters()
+		{
+
+			HttpClient client = new HttpClient();
+
+			// <select name="SemesterDesc">
+			// <select name="Department">
+
+			HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
+			string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
+			mainPage.Dispose();
+
+			//Methodology to getting the semester data from this page.
+
+			string[] manipulatedString = { "Test1", "Test2" };
+
+			foreach (var item in manipulatedString)
+			{
+				semesterList.Add(item);
+			}
+		}
+
+		public async Task FillDepartments()
         {
 
             HttpClient client = new HttpClient();
@@ -42,29 +68,19 @@ namespace RecksWebservice.Data
 
             HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
             string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
+			mainPage.Dispose();
 
-            string manipulatedString = mainPageHtml;
+			//Methodology to getting the department data from this page.
 
-            await Task.Delay(0);
-            return manipulatedString;
-        }
+			string[] manipulatedString = { "Test1", "Test2" };
 
-        public async Task<string> GetSemesters()
-        {
+			foreach (var item in manipulatedString)
+			{
+				departmentList.Add(item);
+			}
+		}
 
-            HttpClient client = new HttpClient();
-
-            // <select name="SemesterDesc">
-            // <select name="Department">
-
-            HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
-            string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
-
-            string manipulatedString = mainPageHtml;
-
-            await Task.Delay(0);
-            return manipulatedString;
-        }
-
-    }
+		public List<string> GetSemesters() => semesterList;
+		public List<string> GetDepartments() => departmentList;
+	}
 }
