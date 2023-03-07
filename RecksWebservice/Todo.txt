@@ -1,12 +1,7 @@
-﻿Implement GetSemester & GetDepartments
-
-* FIX REPEATED INPUT BUG (make a check if data is there)
-
-* Add Dropdown of Available Classes (Field Specific)
+﻿* Add Dropdown of Available Classes (Field Specific)
 * Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)
 * Display "Classes added" list
 * Choose Semester -> Class -: (Queries) -> Display Available Classes & Sections Plus Etc. Details
-
 
 * New Page for Displaying A Live-Drawn Schedule
 	o Preview Schedule in Other Tab?
@@ -18,32 +13,3 @@
 
 * Add a help button / page for user documentation
 * Link to original LSU for user convienence
-
-
-
-Mimport requests
-from bs4 import BeautifulSoup
-
-from urllib3.exceptions import InsecureRequestWarning
-from urllib3 import disable_warnings
-
-disable_warnings(InsecureRequestWarning)
-
-
-base_url = 'http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm'
-post_url = 'http://appl101.lsu.edu/booklet2.nsf/f5e6e50d1d1d05c4862584410071cd2e?CreateDocument'
-
-
-soup = BeautifulSoup(requests.get(base_url).content, 'lxml')
-
-semesters = []
-for s in soup.select('[name="SemesterDesc"] [value]'):
-    semesters.append(s['value'])
-
-departments = []
-for d in soup.select('[name="Department"] option'):
-    departments.append(d.get_text(strip=True))
-
-
-_________________________________________________________________________________________________________
-Upon further development, go back and test to see if "await Task.Delay(0);" lines are actually necessary.

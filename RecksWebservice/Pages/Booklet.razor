@@ -51,9 +51,9 @@
 	private List<string> departmentList = new();
 	protected override async Task OnInitializedAsync()
 	{
-		ClassDataHandler.getMainData();
-		await Task.Run(() => classDataHandler.FillSemesters());
-		await Task.Run(() => classDataHandler.FillDepartments());
+		semesterList = new(); //Cleaning the lists each time the page is reopened.
+		departmentList = new(); //Cleaning the lists each time the page is reopened.
+		await Task.Run(() => classDataHandler.GetBookletData());
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
 	}
