@@ -1,3 +1,4 @@
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 
 namespace RecksWebservice.Data
@@ -6,6 +7,17 @@ namespace RecksWebservice.Data
 	{
 		private List<string> semesterList = new();
 		private List<string> departmentList = new();
+		private static string mainPageHtml = null;
+
+		public static async void getMainData()
+		{
+            HttpClient client = new HttpClient();
+
+            HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
+            mainPageHtml = await mainPage.Content.ReadAsStringAsync();
+            mainPage.Dispose();
+        }
+
 		public async Task<string> GetClassData(string Semester, string Department)
         {
             var values = new Dictionary<string, string>
@@ -39,18 +51,28 @@ namespace RecksWebservice.Data
 		public async Task FillSemesters()
 		{
 
-			HttpClient client = new HttpClient();
-
-			// <select name="SemesterDesc">
-			// <select name="Department">
-
-			HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
-			string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
-			mainPage.Dispose();
-
 			//Methodology to getting the semester data from this page.
 
-			string[] manipulatedString = { "Test1", "Test2" };
+			// wait until loaded
+			while (mainPageHtml == null)
+			{
+				await Task.Delay(10);
+			}
+
+			int firstIndexOfSemester = mainPageHtml.LastIndexOf("SemesterDesc");
+			int lastIndexOfSemester = mainPageHtml.IndexOf("</select");
+
+			string[] manipulatedString = { };
+
+			int reached = firstIndexOfSemester + 14;
+			while (reached < lastIndexOfSemester - 10)
+			{
+				int startIndex = mainPageHtml.IndexOf("<", reached);
+				reached = mainPageHtml.IndexOf(">", reached + 1);
+				int stringLength = reached - startIndex;
+
+				manipulatedString = manipulatedString.Concat(new string[] { mainPageHtml.Substring(startIndex + 15, stringLength - 16) }).ToArray();
+			}
 
 			foreach (var item in manipulatedString)
 			{
@@ -61,18 +83,37 @@ namespace RecksWebservice.Data
 		public async Task FillDepartments()
         {
 
-            HttpClient client = new HttpClient();
+			// wait until loaded
+			while (mainPageHtml == null)
+			{
+				await Task.Delay(10);
+			}
 
-            // <select name="SemesterDesc">
-            // <select name="Department">
-
-            HttpResponseMessage mainPage = await client.GetAsync("http://appl101.lsu.edu/booklet2.nsf/Selector2?OpenForm");
-            string mainPageHtml = await mainPage.Content.ReadAsStringAsync();
-			mainPage.Dispose();
+			int firstIndexOfDepartment = mainPageHtml.LastIndexOf("Department");
+			int lastIndexOfDepartment = mainPageHtml.LastIndexOf("</select");
 
 			//Methodology to getting the department data from this page.
 
-			string[] manipulatedString = { "Test1", "Test2" };
+			string[] manipulatedString = { };
+
+			int reached = firstIndexOfDepartment + 14;
+			while (reached < lastIndexOfDepartment - 10)
+			{
+				int startIndex = mainPageHtml.IndexOf(">", reached);
+				reached = mainPageHtml.IndexOf("<", reached + 1);
+				int stringLength = reached - startIndex;
+
+				string department = mainPageHtml.Substring(startIndex + 1, stringLength - 1);
+
+				// remove random "amp;" strings that show up after & characters
+				int indexOfBad = department.IndexOf("amp;");
+				while (indexOfBad > 0)
+				{
+					department = department.Remove(indexOfBad, 4);
+					indexOfBad = department.IndexOf("amp;");
+				}
+				manipulatedString = manipulatedString.Concat(new string[] { department }).ToArray();
+			}
 
 			foreach (var item in manipulatedString)
 			{

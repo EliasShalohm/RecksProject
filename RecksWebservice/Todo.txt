@@ -1,5 +1,6 @@
 ﻿Implement GetSemester & GetDepartments
 
+* FIX REPEATED INPUT BUG (make a check if data is there)
 
 * Add Dropdown of Available Classes (Field Specific)
 * Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)

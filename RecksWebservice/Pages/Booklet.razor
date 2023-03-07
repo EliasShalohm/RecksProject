@@ -51,6 +51,7 @@
 	private List<string> departmentList = new();
 	protected override async Task OnInitializedAsync()
 	{
+		ClassDataHandler.getMainData();
 		await Task.Run(() => classDataHandler.FillSemesters());
 		await Task.Run(() => classDataHandler.FillDepartments());
 		semesterList = classDataHandler.GetSemesters();
