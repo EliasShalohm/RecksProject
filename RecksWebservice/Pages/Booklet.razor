@@ -1,0 +1,63 @@
+﻿@using Microsoft.AspNetCore;
+@using RecksWebservice.Data
+@inject ClassDataHandler classDataHandler
+<link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
+@page "/booklet"
+<PageTitle>LSU Booklet</PageTitle>
+
+<body>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div id="header-text" class="col-md-12">
+				<h1 class="text-center">
+					WELCOME TO THE NEW LSU BOOKLET
+				</h1>
+			</div>
+		</div>
+		<div id="booklet-info" class="row">
+			<div id="semesters" class="col-md-6">
+				<select name="semester" id="semester">
+					<option disabled selected>Semester</option>
+					@foreach (var semester in semesterList)
+					{
+						<option value="@semester.ToString()">@semester.ToString()</option>
+					}
+				</select>
+			</div>
+			<div id="departments" class="col-md-6">
+				<select name="department" id="department">
+					<option disabled selected>Department</option>
+					@foreach (var department in departmentList)
+					{
+						<option value="@department.ToString()">@department.ToString()</option>
+					}
+				</select>
+			</div>
+			<!--<div class="col-md-4">
+			</div>-->
+		</div>
+		<div class="row">
+			<div id="class-data" class="col-md-6">
+				<p>@LSUClassData</p>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+@code {
+	private List<string> semesterList = new();
+	private List<string> departmentList = new();
+	protected override async Task OnInitializedAsync()
+	{
+		semesterList = new(); //Cleaning the lists each time the page is reopened.
+		departmentList = new(); //Cleaning the lists each time the page is reopened.
+		await Task.Run(() => classDataHandler.GetBookletData());
+		semesterList = classDataHandler.GetSemesters();
+		departmentList = classDataHandler.GetDepartments();
+	}
+	private string LSUClassData = "Classes Display Below...";
+
+	//After code block execution, semester & department lists should automatically fill themselves out accordingly.
+}
