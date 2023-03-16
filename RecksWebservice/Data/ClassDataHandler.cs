@@ -10,7 +10,7 @@ namespace RecksWebservice.Data
 	{
 		private List<string> semesterList = new();
 		private List<string> departmentList = new();
-		private List<Class> classes = new(); //Unused At The Moment
+		private List<Class> classes = new();
 		private string mainPageHtml = "";
 
 		public async Task GetBookletData()
@@ -24,6 +24,7 @@ namespace RecksWebservice.Data
 			FillSearchData(mainPageHtml); //Something is wrong in the HTML reading as some lines are cut.
 		}
 
+		///Method may need readjustment to fill a list of classes.
 		public async Task<string> GetClassData(string Semester, string Department)
         {
             var values = new Dictionary<string, string>
@@ -45,7 +46,7 @@ namespace RecksWebservice.Data
 			// delete all the useless information in the begining
 			htmlData = htmlData.Substring(lastIndexOfUselessInformation + 2);
 
-			// splits the HTML into an array of each line
+			// splits the HTML into an array of strings, where each index represents a line
 			string[] split = htmlData.Split("\n");
 
 			///May need adjustment to not just be the first line.
@@ -61,7 +62,6 @@ namespace RecksWebservice.Data
 		/// <param name="bookletHTML"></param>
 		private void FillSearchData(string bookletHTML)
 		{
-
 			int semesterFirstIndex = bookletHTML.IndexOf(@"<select name=""SemesterDesc"">");
 			int semesterLastIndex = bookletHTML.IndexOf("</select>");
 
@@ -86,7 +86,6 @@ namespace RecksWebservice.Data
 				//Debug.WriteLine(departmentName); ///Functionally just for debugging.
 				departmentList.Add(departmentName);
 			}
-
 		}
 
 		public List<string> GetSemesters() => semesterList;
