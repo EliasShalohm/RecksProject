@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore;
 @using RecksWebservice.Data
+@using System.Diagnostics;
+@using RecksWebservice.Types;
 @inject ClassDataHandler classDataHandler
 <link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
 @page "/booklet"
@@ -17,29 +19,40 @@
 		</div>
 		<div id="booklet-info" class="row">
 			<div id="semesters" class="col-md-6">
-				<select name="semester" id="semester">
+				<select name="semester" id="semester" @onchange="SelectSemester">
 					<option disabled selected>Semester</option>
 					@foreach (var semester in semesterList)
 					{
-						<option value="@semester.ToString()">@semester.ToString()</option>
+						string semesterName = semester.ToString(); //Prevents calling .ToString() more than once.
+						<option value="@semesterName">@semesterName</option>
 					}
 				</select>
 			</div>
 			<div id="departments" class="col-md-6">
-				<select name="department" id="department">
+				<select name="department" id="department" @onchange="SelectDepartment">
 					<option disabled selected>Department</option>
 					@foreach (var department in departmentList)
 					{
-						<option value="@department.ToString()">@department.ToString()</option>
+						string departmentName = department.ToString(); //Prevents calling .ToString() more than once.
+						<option value="@departmentName">@departmentName</option>
 					}
 				</select>
+				
 			</div>
 			<!--<div class="col-md-4">
 			</div>-->
 		</div>
 		<div class="row">
 			<div id="class-data" class="col-md-6">
-				<p>@LSUClassData</p>
+				<select name="classes" id="classes" @onchange="SelectSemester">
+					<option disabled selected>Class</option>
+					@foreach (var visibleClass in classList)
+					{
+						string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
+						<option value="@name">@name</option>
+					}
+				</select>
+
 			</div>
 		</div>
 	</div>
@@ -49,15 +62,55 @@
 @code {
 	private List<string> semesterList = new();
 	private List<string> departmentList = new();
+	private List<string> classList = new();
+
+	private string _selectedSemester = "";
+	private string _selectedDepartment = "";
+	private string _selectedClass = ""; //May need changing.
+	/// <summary>
+	/// Checking and Handling if Department has been selected.
+	/// </summary>
+	/// <param name="e"></param>
+	private async void SelectSemester(ChangeEventArgs e)
+	{
+		string value = e.Value.ToString();
+		_selectedSemester = value;
+		if (!string.IsNullOrWhiteSpace(_selectedDepartment))
+		{
+			FillClasses();
+		}
+	}
+	/// <summary>
+	/// Checking and Handling if Semester has been selected.
+	/// </summary>
+	/// <param name="e"></param>
+	private async void SelectDepartment(ChangeEventArgs e)
+	{
+		string value = e.Value.ToString();
+		_selectedDepartment = value;
+		if (!string.IsNullOrWhiteSpace(_selectedSemester))
+		{
+			FillClasses();
+		}
+	}
+	private async void FillClasses() //May or may not need adjustments.
+	{
+		await Task.Run(() => classDataHandler.GetClassData(_selectedSemester, _selectedDepartment));
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
-		semesterList = new(); //Cleaning the lists each time the page is reopened.
-		departmentList = new(); //Cleaning the lists each time the page is reopened.
+		//Cleaning the lists each time the page is reopened.
+		semesterList.Clear();
+		semesterList = new(); 
+		departmentList.Clear();
+		departmentList = new();
 		await Task.Run(() => classDataHandler.GetBookletData());
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
+
+		classDataHandler.GetClassData("Spring 2023", "COMPUTER SCIENCE");
 	}
-	private string LSUClassData = "Classes Display Below...";
 
 	//After code block execution, semester & department lists should automatically fill themselves out accordingly.
-}
+} 
