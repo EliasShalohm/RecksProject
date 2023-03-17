@@ -108,8 +108,6 @@
 		await Task.Run(() => classDataHandler.GetBookletData());
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
-
-		classDataHandler.GetClassData("Spring 2023", "COMPUTER SCIENCE");
 	}
 
 	//After code block execution, semester & department lists should automatically fill themselves out accordingly.

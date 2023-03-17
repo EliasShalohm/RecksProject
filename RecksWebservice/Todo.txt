@@ -3,6 +3,9 @@
 * Display "Classes added" list
 * Choose Semester -> Class -: (Queries) -> Display Available Classes & Sections Plus Etc. Details
 
+
+[] Something is wrong in the HTML GetBookletData() reading as some lines are cut off at the ends.
+
 * New Page for Displaying A Live-Drawn Schedule
 	o Preview Schedule in Other Tab?
 		- Perhaps Preview is button to other tab for easy-access

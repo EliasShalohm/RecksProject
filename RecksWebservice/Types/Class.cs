@@ -31,13 +31,14 @@ namespace RecksWebservice.Types
         private List<Class> _labs;
         private Professor _professor;
         private bool _isTBAClass = false;
-        private string _classInfo;
+        private string _classInfo = "";
 
         /// <summary>
         /// Constructors
         /// </summary>
         #region Constructors
-        public Class() {
+        public Class()
+        {
             _totalEnrollCount = 0;
             _availableSlots = 0;
             _days = new List<Day>();
@@ -48,57 +49,8 @@ namespace RecksWebservice.Types
             _labs = new List<Class>();
             _professor = new Professor();
         }
-        public Class(int totalEnrollCount, int availAbleSlots, List<Day> days, int startTime, int endTime, bool isNightClass, List<Class> labs, Professor professor)
-        {
-            _totalEnrollCount = totalEnrollCount;
-            _availableSlots = availAbleSlots;
-
-            if (availAbleSlots == 0)
-                _isFull = true;
-
-            _days = days;
-            _startTime = startTime;
-            _endTime = endTime;
-            _isFull = isNightClass;
-            _labs = labs;
-            _isNightClass = isNightClass;
-            _professor = professor;
-        }
-        public Class(int totalEnrollCount, int availAbleSlots, List<Day> days, int startTime, int endTime, bool isNightClass, Professor professor)
-        {
-            _totalEnrollCount = totalEnrollCount;
-            _availableSlots = availAbleSlots;
-            if (availAbleSlots == 0)
-                _isFull = true;
-            _days = days;
-            _startTime = startTime;
-            _endTime = endTime;
-            _isFull = isNightClass;
-            _isNightClass = isNightClass;
-            _labs = new();
-            _professor = professor;
-        }
-
-        public Class(int totalEnrollCount, int availAbleSlots, List<Day> days, int startTime, int endTime, bool isNightClass)
-        {
-            _totalEnrollCount = totalEnrollCount;
-            _availableSlots = availAbleSlots;
-            if (availAbleSlots == 0)
-                _isFull = true;
-            _days = days;
-            _startTime = startTime;
-            _endTime = endTime;
-            _isFull = isNightClass;
-            _isNightClass = isNightClass;
-            _labs = new();
-            _professor = new();
-        }
         #endregion
 
-        /// <summary>
-        /// An assortment of GET-methods to access variables outside of class.
-        /// </summary>
-        /// <returns></returns>
         #region An assortment of GET-methods to access variables outside of class.
         public string GetClassID() => _classID;
         public int GetSection() => _section;
@@ -115,10 +67,7 @@ namespace RecksWebservice.Types
         public Professor GetProfessor() => _professor;
         public string GetClassInfo() => _classInfo;
         #endregion
-        /// <summary>
-        /// Methods that are utilized for SET operations for instances.
-        /// </summary>
-        /// <param name="count"></param>
+        
         #region Methods that are utilized for SET operations for instances.
         public void SetClassID(string id) => _classID = id;
         public void SetClassSection(int section) => _section = section;
@@ -140,7 +89,7 @@ namespace RecksWebservice.Types
         public void AddClassInfo(string classInfo) => _classInfo += "\n" + classInfo;
         #endregion
     
-        public void TestForValues() ///Is this needed? -Z
+        public void PrintTestValues()
         {
             // Get the current enrollment count
             int currentEnrollCount = GetTotalEnrollCount();
@@ -148,11 +97,11 @@ namespace RecksWebservice.Types
 
             Console.WriteLine($"availabe slot count: {GetAvailableSlots()}");
 
-            Console.WriteLine($"get section: {GetSection()}");
+            Console.WriteLine($"section: {GetSection()}");
 
 			Console.WriteLine($"classId: {GetClassID()}");
 
-			Console.WriteLine($"days: {GetDays()}");
+			Console.WriteLine($"days: {GetDays().ToString()}");
 
 			Console.WriteLine($"startTime: {GetStartTime()}");
 
@@ -168,7 +117,7 @@ namespace RecksWebservice.Types
             {
                 Class lab = GetLabs().First();
 				Console.WriteLine($"Lab ----------------------- Lab");
-                lab.TestForValues();
+                lab.PrintTestValues();
 			}
 		}
 
