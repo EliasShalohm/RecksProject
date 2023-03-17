@@ -11,7 +11,7 @@ namespace RecksWebservice.Data
 	{
 		private List<string> semesterList = new();
 		private List<string> departmentList = new();
-		private List<Class> classes = new(); //Unused At The Moment
+		private List<Class> classes = new();
 		private string mainPageHtml = "";
 
 		public async Task GetBookletData()
@@ -252,7 +252,6 @@ namespace RecksWebservice.Data
 		/// <param name="bookletHTML"></param>
 		private void FillSearchData(string bookletHTML)
 		{
-
 			int semesterFirstIndex = bookletHTML.IndexOf(@"<select name=""SemesterDesc"">");
 			int semesterLastIndex = bookletHTML.IndexOf("</select>");
 
@@ -277,7 +276,6 @@ namespace RecksWebservice.Data
 				//Debug.WriteLine(departmentName); ///Functionally just for debugging.
 				departmentList.Add(departmentName);
 			}
-
 		}
 
 		public List<string> GetSemesters() => semesterList;
