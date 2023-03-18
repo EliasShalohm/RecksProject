@@ -46,11 +46,11 @@
 			<div id="class-data" class="col-md-6">
 				<select name="classes" id="classes" @onchange="SelectSemester">
 					<option disabled selected>Class</option>
-					@foreach (var visibleClass in classList)
+					@*@foreach (var visibleClass in classList)
 					{
 						string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
 						<option value="@name">@name</option>
-					}
+					}*@
 				</select>
 
 			</div>
@@ -62,7 +62,7 @@
 @code {
 	private List<string> semesterList = new();
 	private List<string> departmentList = new();
-	private List<string> classList = new();
+	private List<Class> classList = new();
 
 	private string _selectedSemester = "";
 	private string _selectedDepartment = "";
@@ -73,11 +73,12 @@
 	/// <param name="e"></param>
 	private async void SelectSemester(ChangeEventArgs e)
 	{
-		string value = e.Value.ToString();
+		object? selectorValue = e.Value!;
+		string? value = selectorValue.ToString()!;
 		_selectedSemester = value;
 		if (!string.IsNullOrWhiteSpace(_selectedDepartment))
 		{
-			FillClasses();
+			await FillClasses();
 		}
 	}
 	/// <summary>
@@ -86,30 +87,34 @@
 	/// <param name="e"></param>
 	private async void SelectDepartment(ChangeEventArgs e)
 	{
-		string value = e.Value.ToString();
+		object? selectorValue = e.Value!;
+		string? value = selectorValue.ToString()!;
 		_selectedDepartment = value;
 		if (!string.IsNullOrWhiteSpace(_selectedSemester))
 		{
-			FillClasses();
+			await FillClasses();
 		}
 	}
-	private async void FillClasses() //May or may not need adjustments.
+	private async Task FillClasses() //May or may not need adjustments.
 	{
 		await Task.Run(() => classDataHandler.GetClassData(_selectedSemester, _selectedDepartment));
+		classList.Clear();
+		classList = classDataHandler.GetClasses();
 	}
-
 	protected override async Task OnInitializedAsync()
 	{
-		//Cleaning the lists each time the page is reopened.
-		semesterList.Clear();
-		semesterList = new(); 
-		departmentList.Clear();
-		departmentList = new();
+		ResetLists(); //Cleaning the lists each time the page is reopened.
 		await Task.Run(() => classDataHandler.GetBookletData());
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
+	}
+	private void ResetLists()
+	{
+		semesterList.Clear();
+		semesterList = new();
 
-		classDataHandler.GetClassData("Spring 2023", "COMPUTER SCIENCE");
+		departmentList.Clear();
+		departmentList = new();
 	}
 
 	//After code block execution, semester & department lists should automatically fill themselves out accordingly.
