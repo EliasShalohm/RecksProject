@@ -31,10 +31,66 @@
     public View CurrentView { get; set; } = View.Week;
     private DateTime CurrentDate { get; set; }
     private List<AppointmentData> dataSource = new List<AppointmentData>();
+    private List<Class> classes = new List<Class>();
     protected override void OnInitialized()
     {
         base.OnInitialized();
         CurrentDate = DateTime.Today;
+    }
+
+    public void SetClasses(List<Class> classList)
+    {
+        classes = classList;
+        dataSource = new List<AppointmentData>();
+        foreach (Class classObj in classes)
+        {
+            AppointmentData appointment = new AppointmentData()
+                {
+                    Id = classObj.Id,
+                    Subject = classObj.CourseName,
+                    StartTime = classObj.StartTime,
+                    EndTime = classObj.EndTime,
+                    CategoryColor = classObj.Color,
+                };
+            dataSource.Add(appointment);
+        }
+    }
+    public List<Class> CompareClasses()
+    {
+        List<Class> conflictingClasses = new List<Class>();
+        for (int i = 0; i < classes.Count - 1; i++)
+        {
+            for (int j = i + 1; j < classes.Count; j++)
+            {
+                if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
+                {
+                    conflictingClasses.Add(classes[i]);
+                    conflictingClasses.Add(classes[j]);
+                }
+            }
+        }
+        return conflictingClasses;
+    }
+    public void ReportConflictingClasses(List<Class> conflictingClasses)
+    {
+        foreach (Class classObj in conflictingClasses)
+        {
+            Debug.WriteLine("Conflicting class: " + classObj.CourseName);
+        }
+    }
+
+    public void SubmitClasses(Class classObj)
+    {
+        classes.Add(classObj);
+        AppointmentData appointment = new AppointmentData()
+            {
+                Id = classObj.Id,
+                Subject = classObj.CourseName,
+                StartTime = classObj.StartTime,
+                EndTime = classObj.EndTime,
+                CategoryColor = classObj.Color,
+            };
+        dataSource.Add(appointment);
     }
     public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
     {
@@ -67,22 +123,22 @@
         public string StartTimezone { get; set; }
         public string EndTimezone { get; set; }
     }
-    public class ClassSchedule
-    {
-        public string CourseName { get; set; }
-        public string Time { get; set; }
-        public string Location { get; set; }
-        public Professor Professor { get; set; }
-        public int Rating { get; set; }
+  public class Class
+{
+    public int Id { get; set; }
+    public string CourseName { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public string Color { get; set; }
 
-        public ClassSchedule(string courseName, string time, string location, Professor professor, int rating)
-        {
-            CourseName = courseName;
-            Time = time;
-            Location = location;
-            Professor = professor;
-            Rating = rating;
-        }
+    public Class(int id, string courseName, DateTime startTime, DateTime endTime, string color)
+    {
+        Id = id;
+        CourseName = courseName;
+        StartTime = startTime;
+        EndTime = endTime;
+        Color = color;
     }
+}
 }
    
