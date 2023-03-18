@@ -5,9 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< Updated upstream
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+=======
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.54" />
+>>>>>>> Stashed changes
   </ItemGroup>
 </Project>
