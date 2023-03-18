@@ -64,19 +64,21 @@ namespace RecksWebservice.Data
 			htmlData = htmlData.Substring(startIndex, endIndex - startIndex);
 			string[] unfilteredClasses = htmlData.Split("\n");
 
-			/* Test Classes
+			/* Test Classes !(Fall 2023 -> Astronomy)!
+				 ENRL  COURSE           SEC						   HR     TIME		  DAYS							 SPECIAL
+			AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM	BUILDING    ENROLLMENT     INSTRUCTOR
 			----------------------------------------------------------------------------------------------------------------------------------
-			300        ASTR 1101         1  THE SOLAR SYSTEM       3.0   830 - 0920   M W F  0130 NICHOLSON TURLEY C
-			300        ASTR 1101         2  THE SOLAR SYSTEM       3.0   130 - 0250    T TH  0130 NICHOLSON TURLEY C
-			300        ASTR 1102         1  STELLAR ASTRONOMY      3.0  1230 - 0120   M W F  0130 NICHOLSON TURLEY C
-			193        ASTR 1102         2  STELLAR ASTRONOMY      3.0   900 - 1020    T TH  0016 LOCKETT BURNS E
-			 25        ASTR 1108 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N M      0365 NICHOLSON TURLEY C
-			 25        ASTR 1108 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N T     0365 NICHOLSON TURLEY C
-			 25        ASTR 1109 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N W    0365 NICHOLSON TURLEY C
-			 25        ASTR 1109 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N TH  0365 NICHOLSON TURLEY C
-			 15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130 - 0250    T TH  0118 NICHOLSON
-			 10        ASTR 4261         1  MOD OBSERVATIONAL T    3.0   230 - 0320       F  0262 NICHOLSON PENNY M
-								 LAB                                     730 - 1020N TW    0262 NICHOLSON PENNY M
+			300        ASTR 1101         1  THE SOLAR SYSTEM       3.0   830 - 0920   M W F		0130	NICHOLSON					TURLEY C
+			300        ASTR 1101         2  THE SOLAR SYSTEM       3.0   130 - 0250    T TH		0130	NICHOLSON					TURLEY C
+			300        ASTR 1102         1  STELLAR ASTRONOMY      3.0  1230 - 0120   M W F		0130	NICHOLSON					TURLEY C
+			193        ASTR 1102         2  STELLAR ASTRONOMY      3.0   900 - 1020    T TH		0016	LOCKETT						BURNS E
+			 25        ASTR 1108 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  M			0365	NICHOLSON					TURLEY C
+			 25        ASTR 1108 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  T			0365	NICHOLSON					TURLEY C
+			 25        ASTR 1109 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  W			0365	NICHOLSON					TURLEY C
+			 25        ASTR 1109 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  TH		0365	NICHOLSON					TURLEY C
+			 15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130 - 0250   T TH		0118	NICHOLSON					
+			 10        ASTR 4261         1  MOD OBSERVATIONAL T    3.0   230 - 0320       F		0262	NICHOLSON					PENNY M
+								 LAB                                     730 - 1020N  TW		0262	NICHOLSON					PENNY M
 				  *** ASTR 7741 * **CROSS - LISTED WITH PHYS 7741
 			 15        ASTR 7741         1  STELLAR ASTROPHYSICS   3.0  1130 - 1220   M W F  0106 NICHOLSON CHATZOPOULOS
 
@@ -91,68 +93,26 @@ namespace RecksWebservice.Data
 			*/
 
 			//Going through each class in the table. This setup assumes there is no class list that BEGINS with a lab.
+			Class previousClass = new();
 			for (int i = 1; i < unfilteredClasses.Length; i++)
 			{
-				Class previousClass;
-				Class newClass; ///May be redundant?
 				string line = unfilteredClasses[i];
-				if (!line.Contains("*")) //Is not *** Comment "Class"
+				if (!line.Contains("*") && !string.IsNullOrWhiteSpace(line)) //Is not *** Comment "Class"
 				{
-					if (!line.Contains("LAB")) //Regular
+					if (!line.Contains("LAB")) //Regulars
+						previousClass = ProcessClassFromLine(line);
+					else //Labs
 					{
-						previousClass = ProcessNewClass(line);
-
-					} else //Lab
-					{
-
+						//Checking If LAB Is Not Dependant On Previous Class
+						if (IsLabStandardClass(line))
+							previousClass = ProcessClassFromLine(line);
+						else
+							previousClass.AddLab(ProcessLabFromLine(line)); ///Not entirely functional {!}
 					}
+					classes.Add(previousClass);
 				}
 
 			}
-
-			/*for (int i = 1; i < splitTable.Length; i++)
-			{
-				//going through the lines
-				string line = splitTable[i];
-
-				//make sure line is not a *** comment
-				string trimmed = line.Trim();
-				Console.WriteLine("trimmed: " + trimmed + " TRIMMED LENGTH = " + trimmed.Length);
-				if (trimmed.Length > 1 && trimmed[0] == '*')
-				{
-					previousClass.AddClassInfo(line);
-					Console.WriteLine("this line is a comment based on the pervious" + line);
-				}
-				else if (trimmed.Length > 2 && trimmed.Substring(0,3) == "LAB")
-				{
-					Console.WriteLine("its a lab " + line);
-					Class createdClass = MakeLabFromLine(line);
-					if (createdClass != null)
-					{
-						previousClass.AddLab(createdClass);
-					}
-				}
-				else if (trimmed.Length > 0)
-				{
-					Console.WriteLine("this is a class");
-					Class createdClass = MakeClassFromLine(line);
-					if (createdClass != null)
-					{
-						previousClass = createdClass;
-						classes.Add(createdClass);
-					}
-				}
-			}*/
-
-			//May not be needed
-			/*Console.WriteLine("--------------------");
-			for (int i = 0; i < classes.Count; i++)
-			{
-				Console.WriteLine("==========================");
-				Class c = classes[i];
-				c.TestForValues();
-			}*/
-
 		}
 
 		#region Filling & Getting Semester and Department Data
@@ -190,12 +150,27 @@ namespace RecksWebservice.Data
 
 		public List<string> GetSemesters() => semesterList;
 		public List<string> GetDepartments() => departmentList;
+		public List<Class> GetClasses() => classes;
 		#endregion
 
 		#region Alternate Methods - Need Fixing Up!
-		private List<Day> GetDaysFromString(string line) //Requires rework
+		private bool IsLabStandardClass(string line)
 		{
-			//start at 72
+			string availableSlots = line.Substring(0, 3).Trim();
+			string takenSlots = line.Substring(6, 3).Trim();
+			if (availableSlots.Length >= 1 || takenSlots.Length >= 1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		private List<Day> GetDaysFromString(string line)
+		{
+			//Days in line start at index 72
 			List<Day> days = new List<Day>();
 			if (line[72] == 'M')
 			{
@@ -219,7 +194,7 @@ namespace RecksWebservice.Data
 			}
 			return new List<Day>();
 		}
-		private Class ProcessNewClass(string line) //Requires rework
+		private Class ProcessClassFromLine(string line) ///Requires work {!}
 		{
 			Class newClass = new();
 			string availableSlots = line.Substring(0, 3).Trim();
@@ -227,88 +202,98 @@ namespace RecksWebservice.Data
 
 			Console.WriteLine(availableSlots.Length + " " + takenSlots.Length);
 
-			//test that line isnt a random empty line left by WONDERFUL LSU website...
-			if (availableSlots.Length >= 1 || takenSlots.Length >= 1)
+			// default taken to 0 if its empty
+			if (takenSlots.Length == 0)
 			{
-				// default taken to 0 if its empty
-				if (takenSlots.Length == 0)
-				{
-					takenSlots = "0";
-				}
+				takenSlots = "0";
+			}
 
-				// make sure that class isnt on hold
-				if (availableSlots == "(H)")
+			// make sure that class isnt on hold
+			if (availableSlots == "(H)")
+			{
+				Console.WriteLine("this line is on hold, ignore" + line);
+			}
+			else
+			{
+				if (availableSlots == "(F)")
 				{
-					Console.WriteLine("this line is on hold, ignore" + line);
+					newClass.SetFullState(true);
+					newClass.SetAvailableSlots(0);
+					newClass.SetTotalEnrollCount(int.Parse(takenSlots));
 				}
 				else
 				{
-					if (availableSlots == "(F)")
-					{
-						newClass.SetFullState(true);
-						newClass.SetAvailableSlots(0);
-						newClass.SetTotalEnrollCount(int.Parse(takenSlots));
-					}
-					else
-					{
-						newClass.SetAvailableSlots(int.Parse(availableSlots));
-						newClass.SetTotalEnrollCount(int.Parse(takenSlots) + int.Parse(availableSlots));
-					}
-
-					string className = line.Substring(11, 4).Trim(); // ACCT, BIOL, ETC
-					string classNumber = line.Substring(16, 4).Trim();// 1001, ETC
-																	  //im assuming className and classNumber will be both added to classID
-																	  //(can be changed separate accordingly for ease) of access later
-					newClass.SetClassID(className + classNumber);
-
-					string classType = line.Substring(21, 3).Trim(); // aka RESEDENTIAL ONLY?? ETC.
-					newClass.AddClassInfo(classType);
-
-					string classSection = line.Substring(27, 3).Trim();
-					newClass.SetClassSection(int.Parse(classSection));
-
-					string classCredits = line.Substring(55, 4).Trim();
-					if (classCredits.IndexOf("-") > 0) { newClass.SetCredits(0); }
-					else { newClass.SetCredits(double.Parse(classCredits)); }
-
-					bool isTBAClass = false;
-					if (line.IndexOf("TBA") > 0) { isTBAClass = true; }
-
-					if (isTBAClass) { newClass.SetTBAStatus(true); }
-					else
-					{
-						List<Day> days = GetDaysFromString(line);
-						newClass.SetDays(days);
-
-						string startTime = line.Substring(60, 4).Trim();
-						string endTime = line.Substring(65, 4).Trim();
-						bool isNight = false;
-						if (line[69] == 'N')
-						{
-							isNight = true;
-						}
-						newClass.SetStartTime(int.Parse(startTime));
-						newClass.SetEndTime(int.Parse(endTime));
-						newClass.SetNightClass(isNight);
-					}
-
-					//extra info start at 99 ( includes prof name )
-					string extraInfo = line.Substring(99, 17).Trim();
-					newClass.AddClassInfo(extraInfo);
-
-					string professorName = line.Substring(116).Trim();
-
-					Professor professor = new Professor();
-					professor.SetName(professorName);
-					newClass.SetProfessor(professor);
-
-					return newClass;
+					newClass.SetAvailableSlots(int.Parse(availableSlots));
+					newClass.SetTotalEnrollCount(int.Parse(takenSlots) + int.Parse(availableSlots));
 				}
+
+				//Name (Ie. BIOL, ASTR, MATH)
+				string className = line.Substring(11, 4).Trim();
+				newClass.SetClassName(className);
+
+				//ID (Ie. 1001, 1002, 9999)
+				string classNumber = line.Substring(16, 4).Trim();
+				newClass.SetClassNumber(classNumber);
+
+				//Class Type (Ie. RESIDENTIAL ONLY, LAB, SEM, "SEM:")
+				string classType = line.Substring(21, 3).Trim();
+				newClass.SetClassType(classType);
+
+				//Class Section (Ie. 1, 2, 3, 21, etc.)
+				string classSection = line.Substring(27, 3).Trim();
+				newClass.SetClassSection(int.Parse(classSection));
+
+				//Credits (Ie. 1.0, 2.0, 3.0, 1-6, etc.)
+				string classCredits = line.Substring(55, 4).Trim();
+				if (classCredits.IndexOf("-") > 0) { newClass.SetCredits(0); }
+				else { newClass.SetCredits(double.Parse(classCredits)); }
+
+				//Checking if Class is TBA "To Be Announced"
+				bool isTBAClass = false;
+				if (line.IndexOf("TBA") > 0) { isTBAClass = true; }
+
+				if (isTBAClass) { newClass.SetTBAStatus(true); }
+				else
+				{
+					//Class Times
+					List<Day> days = GetDaysFromString(line);
+					newClass.SetDays(days);
+
+					var temp = line.Substring(60, 12).Trim().Split('-');
+					string startTime = temp[0];
+					string endTime = temp[1];
+					if (!startTime.Contains('N') && !endTime.Contains('N'))
+						newClass.SetNightClass(false);
+					else
+					newClass.SetNightClass(true);
+					newClass.SetStartTime(startTime);
+					newClass.SetEndTime(endTime);
+					
+				}
+
+				///Add reading for course title {!}
+
+				///Need to get class room # & building {!}
+
+
+				///Will need to be changed to account professor name (& last initial) (and the lack thereof) seperate from building.
+				//extra info start at 99 ( includes prof name )
+				//string extraInfo = line.Substring(99, 17).Trim();
+				//newClass.SetClassType(extraInfo);
+
+				/* CRASHES AT THIS LINE -> 15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130-0250    T TH  0118 NICHOLSON
+				 * This crash is caused by the lack of a professor name, where the line below is trying to find a substring at an index that does not exist.
+				string professorName = line.Substring(116).Trim();
+
+				Professor professor = new Professor();
+				professor.SetName(professorName);
+				newClass.SetProfessor(professor);
+				*/
 			}
-			Console.WriteLine("RETURNING NULL FOR LINE: " + line);
-			return null;
+			return newClass;
+
 		}
-		private Class MakeLabFromLine(string line) //Requires rework
+		private Class ProcessLabFromLine(string line) //Requires rework
 		{
 			Class createdClass = new();
 
@@ -317,14 +302,14 @@ namespace RecksWebservice.Data
 
 			string startTime = line.Substring(60, 4).Trim();
 			string endTime = line.Substring(65, 4).Trim();
-			bool isNight = false;
-			if (line[69] == 'N')
+			/*bool isNight = false;
+			if (line[69] == 'N') //Nice, but indexing may not be a good idea here.
 			{
 				isNight = true;
 			}
 			createdClass.SetStartTime(int.Parse(startTime));
 			createdClass.SetEndTime(int.Parse(endTime));
-			createdClass.SetNightClass(isNight);
+			createdClass.SetNightClass(isNight);*/
 			return createdClass;
 		}
 		#endregion
