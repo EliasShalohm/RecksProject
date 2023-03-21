@@ -10,10 +10,27 @@
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Data
 @using Data
+<style>
+    h3 {
+        font-family: Cambria;
+        font-weight: bold;
+        text-align: center;
+        color: #461D7C;
+    }
+    .buttons{
+        background-color: #461D7C;
+        color: white;
+        border: none;
+        font-family: Cambria;
+    }
+</style>
 
 <h3>Class Scheduler</h3>
 
-<div class="col-lg-12 control-section">
+<button class="buttons">Add Class</button> <br />
+<button class="buttons">Remove Class</button><br />
+<button class="buttons">Edit Class</button>
+<div align ="right" class="col-lg-12 control-section">
     <SfSchedule TValue="AppointmentData" Width="80%" Height="1000px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="24:00">
         <ScheduleEvents TValue="AppointmentData" EventRendered="OnEventRendered"></ScheduleEvents>
         <ScheduleEventSettings DataSource="@dataSource"></ScheduleEventSettings>
