@@ -10,12 +10,11 @@ namespace RecksWebservice
 
         public User()
 		{
- 
-		}
 
+		}
+       
 		public void AddClass()
 		{
-
 		}
 
 		public void CheckIfHoursAreLegal()
