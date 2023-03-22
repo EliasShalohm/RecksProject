@@ -110,7 +110,10 @@ namespace RecksWebservice.Data
 						else
 							previousClass.AddLab(ProcessLabFromLine(line)); ///Not entirely functional {!}
 					}
-					classes.Add(previousClass);
+					if (previousClass != null)
+					{
+						classes.Add(previousClass);
+					}
 				}
 
 			}
@@ -173,36 +176,44 @@ namespace RecksWebservice.Data
 		{
 			//Days in line start at index 72
 			List<Day> days = new List<Day>();
+			if (line.Length < 73) { return days; }
 			if (line[72] == 'M')
 			{
 				days.Add(Day.Monday);
 			}
+			if (line.Length < 74) { return days; }
 			if (line[73] == 'T')
 			{
 				days.Add(Day.Tuesday);
 			}
+			if (line.Length < 75) { return days; }
 			if (line[74] == 'W')
 			{
 				days.Add(Day.Wednesday);
 			}
-			if (line[75] == 'T')
+			if (line.Length < 76) { return days; }
+			if ( line[75] == 'T')
 			{
 				days.Add(Day.Thursday);
 			}
+			if (line.Length < 77) { return days; }
 			if (line[76] == 'F')
 			{
 				days.Add(Day.Friday);
 			}
-			return new List<Day>();
+			return days;
 		}
 		private Class ProcessClassFromLine(string line) ///Requires work {!}
 		{
+			int lastIndexOfLine = line.Length;
+
 			Class newClass = new();
 			string availableSlots = line.Substring(0, 3).Trim();
 			string takenSlots = line.Substring(6, 3).Trim();
 
 			Console.WriteLine(availableSlots.Length + " " + takenSlots.Length);
-
+			Console.WriteLine(line);
+			if (availableSlots.Length == 0 && takenSlots.Length == 0) { return null; }
 			// default taken to 0 if its empty
 			if (takenSlots.Length == 0)
 			{
@@ -244,6 +255,10 @@ namespace RecksWebservice.Data
 				string classSection = line.Substring(27, 3).Trim();
 				newClass.SetClassSection(int.Parse(classSection));
 
+				//Course Title (Ie. DISCRETE STRUCTURES, NUMERICAL METHODS, etc.)
+				string courseTitle = line.Substring(30, 25).Trim();
+				newClass.SetCourseTitle(courseTitle);
+
 				//Credits (Ie. 1.0, 2.0, 3.0, 1-6, etc.)
 				string classCredits = line.Substring(55, 4).Trim();
 				if (classCredits.IndexOf("-") > 0) { newClass.SetCredits(0); }
@@ -260,6 +275,14 @@ namespace RecksWebservice.Data
 					List<Day> days = GetDaysFromString(line);
 					newClass.SetDays(days);
 
+					//Room No. (1202, etc.)
+					string roomNumber = line.Substring(79, 4).Trim();
+					newClass.SetRoomNumber(roomNumber);
+
+					//Course Building (NICHOLSON, etc.)
+					string courseBuilding = line.Substring(74, 15).Trim();
+					newClass.SetCourseBuilding(courseBuilding);
+
 					var temp = line.Substring(60, 12).Trim().Split('-');
 					string startTime = temp[0];
 					string endTime = temp[1];
@@ -272,24 +295,21 @@ namespace RecksWebservice.Data
 					
 				}
 
-				///Add reading for course title {!}
 
-				///Need to get class room # & building {!}
-
-
-				///Will need to be changed to account professor name (& last initial) (and the lack thereof) seperate from building.
-				//extra info start at 99 ( includes prof name )
-				//string extraInfo = line.Substring(99, 17).Trim();
+				//Special Enrollment Ie. (100% WEB BASED, CI-WRITTEN&SPOK, CI-WRITTEN&TECH, etc.)
+				if (lastIndexOfLine < 116) { return newClass; }
+				string specialEnrollment = line.Substring(99, 17).Trim();
+				newClass.SetSpecialEnrollment(specialEnrollment);
 				//newClass.SetClassType(extraInfo);
 
-				/* CRASHES AT THIS LINE -> 15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130-0250    T TH  0118 NICHOLSON
-				 * This crash is caused by the lack of a professor name, where the line below is trying to find a substring at an index that does not exist.
+				// to prevent crashing check if line Length is longer than index accessing
+
 				string professorName = line.Substring(116).Trim();
 
 				Professor professor = new Professor();
 				professor.SetName(professorName);
 				newClass.SetProfessor(professor);
-				*/
+				
 			}
 			return newClass;
 
@@ -303,14 +323,14 @@ namespace RecksWebservice.Data
 
 			string startTime = line.Substring(60, 4).Trim();
 			string endTime = line.Substring(65, 4).Trim();
-			/*bool isNight = false;
+			bool isNight = false;
 			if (line[69] == 'N') //Nice, but indexing may not be a good idea here.
 			{
 				isNight = true;
 			}
-			createdClass.SetStartTime(int.Parse(startTime));
-			createdClass.SetEndTime(int.Parse(endTime));
-			createdClass.SetNightClass(isNight);*/
+			createdClass.SetStartTime(startTime);
+			createdClass.SetEndTime(endTime);
+			createdClass.SetNightClass(isNight);
 			return createdClass;
 		}
 		#endregion

@@ -34,7 +34,9 @@ namespace RecksWebservice.Types
         private List<Class> _labs;
         private Professor _professor;
         private bool _isTBAClass = false;
-
+        private string _specialEnrollment;
+        private string _roomNumber;
+        private string _courseBuilding;
         /// <summary>
         /// Constructors
         /// </summary>
@@ -69,6 +71,9 @@ namespace RecksWebservice.Types
         public List<Class> GetLabs() => _labs;
         public Professor GetProfessor() => _professor;
         public string GetClassType() => _classType;
+        public string GetSpecialEnrollment() => _specialEnrollment;
+        public string GetRoomNumber() => _roomNumber;
+        public string GetCourseBuilding() => _courseBuilding;
 		#endregion
 
 		#region Methods that are utilized for SET operations for instances.
@@ -91,6 +96,9 @@ namespace RecksWebservice.Types
         public void AddLab(Class lab) => _labs.Add(lab);   
         public void SetProfessor(Professor professor) => _professor = professor;
         public void SetClassType(string classInfo) => _classType = classInfo;
+        public void SetSpecialEnrollment(string specialEnrollment) => _specialEnrollment = specialEnrollment;
+        public void SetRoomNumber(string roomNumber) => _roomNumber = roomNumber;
+        public void SetCourseBuilding(string courseBuilding) => _courseBuilding = courseBuilding;
         #endregion
     
         public void PrintTestValues()
