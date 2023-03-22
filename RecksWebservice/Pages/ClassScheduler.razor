@@ -32,6 +32,17 @@
     private DateTime CurrentDate { get; set; }
     private List<AppointmentData> dataSource = new List<AppointmentData>();
     private List<Class> classes = new List<Class>();
+    
+    private void OnPopupOpen(PopupOpenEventArgs<AppointmentData> args)
+    {
+        if (args.Type == PopupType.QuickInfo && args.Data != null)
+        {
+            DateTime clickedDate = args.Data.StartTime;
+            // Add your class to the clicked date here
+            // For example, you can add a CSS class to the clicked date to display the class name
+            args.Data.CategoryColor = "my-class-name";
+        }
+    }
     protected override void OnInitialized()
     {
         base.OnInitialized();
