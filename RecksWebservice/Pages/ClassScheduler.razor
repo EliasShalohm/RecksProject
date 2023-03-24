@@ -9,153 +9,139 @@
 @using Syncfusion.Blazor.Calendars
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Data
-@using Data
 <style>
-    h3 {
-        font-family: Cambria;
-        font-weight: bold;
-        text-align: center;
-        color: #461D7C;
-    }
-    .buttons{
-        background-color: #461D7C;
-        color: white;
-        border: none;
-        font-family: Cambria;
-    }
+	h3 {
+		font-family: Cambria;
+		font-weight: bold;
+		text-align: center;
+		color: #461D7C;
+	}
+
+	.buttons {
+		background-color: #461D7C;
+		color: white;
+		border: none;
+		font-family: Cambria;
+	}
 </style>
 
 <h3>Class Scheduler</h3>
 
-<button class="buttons">Add Class</button> <br />
-<button class="buttons">Remove Class</button><br />
+<button class="buttons">Add Class</button>
+<br/>
+<button class="buttons">Remove Class</button>
+<br/>
 <button class="buttons">Edit Class</button>
-<div align ="right" class="col-lg-12 control-section">
-    <SfSchedule TValue="AppointmentData" Width="80%" Height="1000px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="24:00">
-        <ScheduleEvents TValue="AppointmentData" EventRendered="OnEventRendered"></ScheduleEvents>
-        <ScheduleEventSettings DataSource="@dataSource"></ScheduleEventSettings>
-        <ScheduleViews>
-            <ScheduleView Option="View.Day"></ScheduleView>
-            <ScheduleView Option="View.Week"></ScheduleView>
-            <ScheduleView Option="View.WorkWeek"></ScheduleView>
-            <ScheduleView Option="View.Month"></ScheduleView>
-            <ScheduleView Option="View.Agenda"></ScheduleView>
-        </ScheduleViews>
-    </SfSchedule>
+
+<div align="right" class="col-lg-12 control-section">
+	<SfSchedule TValue="AppointmentData" Width="80%" Height="1000px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="24:00">
+		<ScheduleEvents TValue="AppointmentData" EventRendered="OnEventRendered"></ScheduleEvents>
+		<ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
+		<ScheduleViews>
+			<ScheduleView Option="View.Week"></ScheduleView>
+			<ScheduleView Option="View.WorkWeek"></ScheduleView>
+		</ScheduleViews>
+	</SfSchedule>
 </div>
 
+<br/>
+
 @code {
-    public View CurrentView { get; set; } = View.Week;
-    private DateTime CurrentDate { get; set; }
-    private List<AppointmentData> dataSource = new List<AppointmentData>();
-    private List<Class> classes = new List<Class>();
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        CurrentDate = DateTime.Today;
-    }
+	public View CurrentView { get; set; } = View.Week;
+	private DateTime CurrentDate { get; set; }
+	private List<AppointmentData> DataSource = new List<AppointmentData>();
+	private List<Class> classes = new List<Class>();
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		CurrentDate = DateTime.Today;
+	}
 
-    public void SetClasses(List<Class> classList)
-    {
-        classes = classList;
-        dataSource = new List<AppointmentData>();
-        foreach (Class classObj in classes)
-        {
-            AppointmentData appointment = new AppointmentData()
-                {
-                    Id = classObj.Id,
-                    Subject = classObj.CourseName,
-                    StartTime = classObj.StartTime,
-                    EndTime = classObj.EndTime,
-                    CategoryColor = classObj.Color,
-                };
-            dataSource.Add(appointment);
-        }
-    }
-    public List<Class> CompareClasses()
-    {
-        List<Class> conflictingClasses = new List<Class>();
-        for (int i = 0; i < classes.Count - 1; i++)
-        {
-            for (int j = i + 1; j < classes.Count; j++)
-            {
-                if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
-                {
-                    conflictingClasses.Add(classes[i]);
-                    conflictingClasses.Add(classes[j]);
-                }
-            }
-        }
-        return conflictingClasses;
-    }
-    public void ReportConflictingClasses(List<Class> conflictingClasses)
-    {
-        foreach (Class classObj in conflictingClasses)
-        {
-            Debug.WriteLine("Conflicting class: " + classObj.CourseName);
-        }
-    }
+	public void SetClasses(List<Class> classList)
+	{
+		classes = classList;
+		DataSource = new List<AppointmentData>()
 
-    public void SubmitClasses(Class classObj)
-    {
-        classes.Add(classObj);
-        AppointmentData appointment = new AppointmentData()
-            {
-                Id = classObj.Id,
-                Subject = classObj.CourseName,
-                StartTime = classObj.StartTime,
-                EndTime = classObj.EndTime,
-                CategoryColor = classObj.Color,
-            };
-        dataSource.Add(appointment);
-    }
-    public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
-    {
-        Dictionary<string, object> attributes = new Dictionary<string, object>();
-        if (CurrentView == View.Agenda)
-        {
-            attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
-        }
-        else
-        {
-            attributes.Add("style", "background: " + args.Data.CategoryColor);
-        }
-        args.Attributes = attributes;
-    }
+		///Values below currently do NOT appear on schedule visualizer
+		{
+			new AppointmentData { Id = 1, Subject = "Testing", StartTime = new DateTime(
+					DateTime.Now.Year,
+					DateTime.Now.Month, 22, 9, 30, 0),
+				EndTime = new DateTime(
+					DateTime.Now.Year,
+					DateTime.Now.Month, 22, 10, 30, 0)},
+			new AppointmentData { Id = 2, Subject = "Conference", StartTime = new DateTime(
+					DateTime.Now.Year,
+					DateTime.Now.Month, 24, 10, 30, 0),
+				EndTime = new DateTime(
+					DateTime.Now.Year,
+					DateTime.Now.Month, 24, 12, 0, 0)},
+		};
 
+		///Commented for testing values elsewhere.
+		//foreach (Class classObj in classes)
+		//{
+		//	AppointmentData appointment = new AppointmentData()
+		//		{
+		//			Id = classObj.GetClassID(),
+		//			Subject = classObj.GetClassName(),
+		//			StartTime = classObj.GetStartTimes()[0], ///Reading 0'th index, which may need fixing
+		//			EndTime = classObj.GetEndTimes()[0], ///Reading 0'th index, which may need fixing
+		//			CategoryColor = classObj.GetColor(),
+		//		};
+		//	DataSource.Add(appointment);
+		//}
 
-    public class AppointmentData
-    {
-        public int Id { get; set; }
-        public string Subject { get; set; }
-        public string Location { get; set; }
-        public string Description { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public Nullable<bool> IsAllDay { get; set; }
-        public string CategoryColor { get; set; }
-        public string RecurrenceRule { get; set; }
-        public Nullable<int> RecurrenceID { get; set; }
-        public string RecurrenceException { get; set; }
-        public string StartTimezone { get; set; }
-        public string EndTimezone { get; set; }
-    }
-  public class Class
-{
-    public int Id { get; set; }
-    public string CourseName { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public string Color { get; set; }
+	}
+	public List<Class> CompareClasses()
+	{
+		List<Class> conflictingClasses = new List<Class>();
+		//for (int i = 0; i < classes.Count - 1; i++)
+		//{
+		//	for (int j = i + 1; j < classes.Count; j++)
+		//	{
+		//		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
+		//		{
+		//			conflictingClasses.Add(classes[i]);
+		//			conflictingClasses.Add(classes[j]);
+		//		}
+		//	}
+		//}
+		return conflictingClasses;
+	}
+	public void ReportConflictingClasses(List<Class> conflictingClasses)
+	{
+		foreach (Class classObj in conflictingClasses)
+		{
+			Debug.WriteLine("Conflicting class: " + classObj.GetClassName());
+		}
+	}
 
-    public Class(int id, string courseName, DateTime startTime, DateTime endTime, string color)
-    {
-        Id = id;
-        CourseName = courseName;
-        StartTime = startTime;
-        EndTime = endTime;
-        Color = color;
-    }
+	public void SubmitClasses(Class classObj)
+	{
+		classes.Add(classObj);
+		AppointmentData appointment = new AppointmentData()
+			{
+				Id = int.Parse(classObj.GetClassID()),
+				Subject = classObj.GetClassName(),
+				//StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
+				//EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
+				CategoryColor = classObj.GetColor(),
+			};
+		DataSource.Add(appointment);
+	}
+	public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
+	{
+		Dictionary<string, object> attributes = new Dictionary<string, object>();
+		if (CurrentView == View.Agenda)
+		{
+			attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
+		}
+		else
+		{
+			attributes.Add("style", "background: " + args.Data.CategoryColor);
+		}
+		args.Attributes = attributes;
+	}
+
 }
-}
-   

@@ -1,4 +1,6 @@
-﻿using System.Reflection.Emit;
+﻿using Microsoft.VisualBasic;
+using Syncfusion.Blazor.RichTextEditor.Internal;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace RecksWebservice.Types
@@ -6,13 +8,13 @@ namespace RecksWebservice.Types
     #region The "Day" Enum ; Enclosed For Space
     public enum Day
     {
-        Monday,
-        Tuesday,
-        Wednesday,
-        Thursday,
-        Friday,
-        Saturday,
-        Sunday
+        Monday = 1,
+        Tuesday = 2,
+        Wednesday = 3,
+        Thursday = 4,
+        Friday = 5,
+        Saturday = 6,
+        Sunday = 7
     }
     #endregion
 
@@ -26,9 +28,9 @@ namespace RecksWebservice.Types
         private int _section = 0;
         private double _credits;
         private string _courseTitle = "";
+        private List<DateTime> _startTimes; //Maybe Temporary
+        private List<DateTime> _endTimes;
         private List<Day> _days;
-        private string _startTime;
-        private string _endTime;
         private bool _isFull;
         private bool _isNightClass;
         private List<Class> _labs;
@@ -37,25 +39,33 @@ namespace RecksWebservice.Types
         private string _specialEnrollment;
         private string _roomNumber;
         private string _courseBuilding;
-        /// <summary>
-        /// Constructors
-        /// </summary>
-        #region Constructors
-        public Class()
+        private string _colour;
+
+		/// <summary>
+		/// Constructors
+		/// </summary>
+		#region Constructors
+		public Class()
         {
             _totalEnrollCount = 0;
             _availableSlots = 0;
             _days = new List<Day>();
-            _startTime = null!;
-            _endTime = null!;
             _isFull = false;
             _labs = new List<Class>();
             _professor = new Professor();
         }
-        #endregion
+		public Class(string id, string courseName, DateTime startTime, DateTime endTime, string color)
+		{
+			_classID = id;
+			_className = courseName;
+			//_startTime = startTime.ToString(); //.ToString() is temporary until DateTime is figured out.
+			//_endTime = endTime.ToString(); //.ToString() is temporary until DateTime is figured out.
+			_colour = color;
+		}
+		#endregion
 
-        #region An assortment of GET-methods to access variables outside of class.
-        public string GetClassName() => _className;
+		#region An assortment of GET-methods to access variables outside of class.
+		public string GetClassName() => _className;
         public string GetClassID() => _classID;
         public int GetSection() => _section;
         public int GetTotalEnrollCount() => _totalEnrollCount;
@@ -64,8 +74,8 @@ namespace RecksWebservice.Types
         public bool GetTBAStatus() => _isTBAClass;
         public string GetCourseTitle() => _courseTitle;
         public List<Day> GetDays() => _days;
-        public string GetStartTime() => _startTime;
-        public string GetEndTime() => _endTime;
+        public List<DateTime> GetStartTimes() => _startTimes;
+        public List<DateTime> GetEndTimes() => _endTimes;
         public bool GetFullState() => _isFull;
         public bool CheckNightClassState() => _isNightClass;
         public List<Class> GetLabs() => _labs;
@@ -74,6 +84,7 @@ namespace RecksWebservice.Types
         public string GetSpecialEnrollment() => _specialEnrollment;
         public string GetRoomNumber() => _roomNumber;
         public string GetCourseBuilding() => _courseBuilding;
+        public string GetColor() => _colour;
 		#endregion
 
 		#region Methods that are utilized for SET operations for instances.
@@ -89,8 +100,8 @@ namespace RecksWebservice.Types
         public void RemoveDay(Day day) => _days.Remove(day);
         public void SetFullState(bool full) => _isFull = full;
         public void SetDays(List<Day> days) => _days = days;
-        public void SetStartTime(string startTime) => _startTime = startTime;
-        public void SetEndTime(string endTime) => _endTime = endTime;
+        public void SetStartHours(string startTime) => _startTimes = ParseToDateTime(startTime);
+        public void SetEndHours(string endTime) => _endTimes = ParseToDateTime(endTime);
         public void SetNightClass(bool isNightClass) => _isNightClass = isNightClass;
         public void AssignLabs(List<Class> labs) => _labs = labs;
         public void AddLab(Class lab) => _labs.Add(lab);   
@@ -99,9 +110,42 @@ namespace RecksWebservice.Types
         public void SetSpecialEnrollment(string specialEnrollment) => _specialEnrollment = specialEnrollment;
         public void SetRoomNumber(string roomNumber) => _roomNumber = roomNumber;
         public void SetCourseBuilding(string courseBuilding) => _courseBuilding = courseBuilding;
-        #endregion
-    
-        public void PrintTestValues()
+        public void SetColor(string color) => _colour = color;
+		public void SetColor(Color color) => _colour = color.ToString(); //May need adjustment for better parsing
+		#endregion
+
+		private List<DateTime> ParseToDateTime(string input)
+        {
+            var newTime = input;
+			if (input[0].Equals('0'))
+                newTime = input.Substring(1);
+			
+            string hour = "";
+			switch (newTime.Length)
+			{
+				case 3:
+					hour = Strings.Left(newTime, 1);
+					break;
+				case 4:
+                    hour = Strings.Left(newTime, 2);
+					break;
+			}
+			string minutes = Strings.Right(newTime, 2);
+
+            List<DateTime> days = new();
+            foreach (var day in _days)
+            {
+                days.Add(new DateTime(
+                    DateTime.Now.Year,
+                    DateTime.Now.Month,
+					(int)day,
+                    int.Parse(hour),
+                    int.Parse(minutes), 0));
+            }
+			return days;
+		}
+
+		public void PrintTestValues()
         {
             // Get the current enrollment count
             int currentEnrollCount = GetTotalEnrollCount();
@@ -115,9 +159,9 @@ namespace RecksWebservice.Types
 
 			Console.WriteLine($"days: {GetDays().ToString()}");
 
-			Console.WriteLine($"startTime: {GetStartTime()}");
+			Console.WriteLine($"startTime: {GetStartTimes()}");
 
-			Console.WriteLine($"ENDTime: {GetEndTime()}");
+			Console.WriteLine($"ENDTime: {GetEndTimes()}");
 
 			Console.WriteLine($"isFull: {GetFullState()}");
 

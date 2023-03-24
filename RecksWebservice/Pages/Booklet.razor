@@ -1,8 +1,8 @@
-﻿@using Microsoft.AspNetCore;
-@using RecksWebservice.Data
+﻿@using System.Collections.Generic;
+@using Microsoft.AspNetCore;
 @using System.Diagnostics;
+@using RecksWebservice.Data;
 @using RecksWebservice.Types;
-@using System.Collections.Generic;
 
 @inject ClassDataHandler classDataHandler
 <link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
@@ -60,11 +60,11 @@
 			<div id="class-data" class="col-md-6">
 				<select name="classes" id="classes" @onchange="SelectSemester">
 					<option disabled selected>Class</option>
-					@*@foreach (var visibleClass in classList)
+					@foreach (var visibleClass in classList)
 					{
 						string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
 						<option value="@name">@name</option>
-					}*@
+					}
 				</select>
 
 			</div>
@@ -126,9 +126,10 @@
 	{
 		semesterList.Clear();
 		semesterList = new();
-
 		departmentList.Clear();
 		departmentList = new();
+		classList.Clear();
+		classList = new();
 	}
 
 	//After code block execution, semester & department lists should automatically fill themselves out accordingly.
