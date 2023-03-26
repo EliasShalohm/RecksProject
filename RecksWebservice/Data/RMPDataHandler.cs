@@ -4,28 +4,43 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using HtmlAgilityPack;
+using System.Net.Http;
 
 
 namespace RecksWebservice.Data
 {
     public class RMPDataHandler
     {
-        private static string University = "";
         private static string Professor = "";
         private List<string> Class = new();
 
+        
+        
 
         public async Task GetProfessorData( string Professor, string Class)
         {
-            University = "Louisiana State University";
-            Professor = "Aymond";   //replace both with user entry
+            //Simulate entry from booklet
             Class = "CSC3380";
+            Professor = "AYMOND P"; 
 
+            //Split string into last name and first initial
+            string[] split = Professor.Split(' ');
+            var LastName = split[0];
+            var FirstInitial = split[1];
+            
+            //Query RMP using professor last name and first initial
+            string url = "https://www.ratemyprofessors.com/search/teachers?query="+LastName+"%20"+FirstInitial+"&sid=U2Nob29sLTMwNzE=";
+            
+            //Reads content from RMP as string
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync("https://www.ratemyprofessors.com");
+            var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                //If request success, parse website using University, Professor, and Course
+                try
+                {
+                    await response.Content.ReadAsStringAsync();
+                }
+                catch{}
             }
         }
         
