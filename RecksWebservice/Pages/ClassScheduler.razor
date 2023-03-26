@@ -36,9 +36,8 @@
 </div>
 
     <div align="center" class="col-lg-12 control-section">
-        <SfSchedule TValue="AppointmentData" Width="75%" Height="1000px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="24:00">
+        <SfSchedule TValue="AppointmentData" Width="85%" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="19:00">
             <ScheduleEvents TValue="AppointmentData" EventRendered="OnEventRendered"></ScheduleEvents>
-            <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
             <ScheduleViews>
                 <ScheduleView Option="View.Day"></ScheduleView>
                 <ScheduleView Option="View.Week"></ScheduleView>
@@ -46,27 +45,27 @@
                 <ScheduleView Option="View.Month"></ScheduleView>
                 <ScheduleView Option="View.Agenda"></ScheduleView>
             </ScheduleViews>
+            <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
         </SfSchedule>
         <br />
     </div>
-
     <br />
 
     @code {
-        public View CurrentView { get; set; } = View.Week;
-        private DateTime CurrentDate { get; set; }
-        private List<AppointmentData> DataSource = new List<AppointmentData>();
-        private List<Class> classes = new List<Class>();
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            CurrentDate = DateTime.Today;
-        }
+            public View CurrentView { get; set; } = View.Week;
+            private DateTime CurrentDate { get; set; }
+            private List<AppointmentData> DataSource = new List<AppointmentData>();
+            private List<Class> classes = new List<Class>();
+            protected override void OnInitialized()
+            {
+                base.OnInitialized();
+                CurrentDate = DateTime.Today;
+            }
 
-        public void SetClasses(List<Class> classList)
-        {
-            classes = classList;
-            DataSource = new List<AppointmentData>()
+            public void SetClasses(List<Class> classList)
+            {
+                classes = classList;
+                DataSource = new List<AppointmentData>()
 
         ///Values below currently do NOT appear on schedule visualizer
         {
@@ -84,70 +83,76 @@
                     DateTime.Now.Month, 24, 12, 0, 0)},
         };
 
-            ///Commented for testing values elsewhere.
-            //foreach (Class classObj in classes)
-            //{
-            //	AppointmentData appointment = new AppointmentData()
-            //		{
-            //			Id = classObj.GetClassID(),
-            //			Subject = classObj.GetClassName(),
-            //			StartTime = classObj.GetStartTimes()[0], ///Reading 0'th index, which may need fixing
-            //			EndTime = classObj.GetEndTimes()[0], ///Reading 0'th index, which may need fixing
-            //			CategoryColor = classObj.GetColor(),
-            //		};
-            //	DataSource.Add(appointment);
-            //}
+                ///Commented for testing values elsewhere.
+                //foreach (Class classObj in classes)
+                //{
+                //	AppointmentData appointment = new AppointmentData()
+                //		{
+                //			Id = classObj.GetClassID(),
+                //			Subject = classObj.GetClassName(),
+                //			StartTime = classObj.GetStartTimes()[0], ///Reading 0'th index, which may need fixing
+                //			EndTime = classObj.GetEndTimes()[0], ///Reading 0'th index, which may need fixing
+                //			CategoryColor = classObj.GetColor(),
+                //		};
+                //	DataSource.Add(appointment);
+                //}
 
-        }
-        public List<Class> CompareClasses()
-        {
-            List<Class> conflictingClasses = new List<Class>();
-            //for (int i = 0; i < classes.Count - 1; i++)
-            //{
-            //	for (int j = i + 1; j < classes.Count; j++)
-            //	{
-            //		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
-            //		{
-            //			conflictingClasses.Add(classes[i]);
-            //			conflictingClasses.Add(classes[j]);
-            //		}
-            //	}
-            //}
-            return conflictingClasses;
-        }
-        public void ReportConflictingClasses(List<Class> conflictingClasses)
-        {
-            foreach (Class classObj in conflictingClasses)
-            {
-                Debug.WriteLine("Conflicting class: " + classObj.GetClassName());
             }
-        }
-
-        public void SubmitClasses(Class classObj)
-        {
-            classes.Add(classObj);
-            AppointmentData appointment = new AppointmentData()
+            public List<Class> CompareClasses()
             {
-                Id = int.Parse(classObj.GetClassID()),
-                Subject = classObj.GetClassName(),
-                //StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
-                //EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
-                CategoryColor = classObj.GetColor(),
+                List<Class> conflictingClasses = new List<Class>();
+                //for (int i = 0; i < classes.Count - 1; i++)
+                //{
+                //	for (int j = i + 1; j < classes.Count; j++)
+                //	{
+                //		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
+                //		{
+                //			conflictingClasses.Add(classes[i]);
+                //			conflictingClasses.Add(classes[j]);
+                //		}
+                //	}
+                //}
+                return conflictingClasses;
+            }
+            public void ReportConflictingClasses(List<Class> conflictingClasses)
+            {
+                foreach (Class classObj in conflictingClasses)
+                {
+                    Debug.WriteLine("Conflicting class: " + classObj.GetClassName());
+                }
+            }
+
+            public void SubmitClasses(Class classObj)
+            {
+                classes.Add(classObj);
+                AppointmentData appointment = new AppointmentData()
+                {
+                    Id = int.Parse(classObj.GetClassID()),
+                    Subject = classObj.GetClassName(),
+                    //StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
+                    //EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
+                    CategoryColor = classObj.GetColor(),
+                };
+                DataSource.Add(appointment);
+            }
+            public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
+            {
+                Dictionary<string, object> attributes = new Dictionary<string, object>();
+                if (CurrentView == View.Agenda)
+                {
+                    attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
+                }
+                else
+                {
+                    attributes.Add("style", "background: " + args.Data.CategoryColor);
+                }
+                args.Attributes = attributes;
+
+                List<AppointmentData> AD = new List<AppointmentData> {
+                new AppointmentData{Id = 1, Subject = "Class", StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month,26,10, 0, 0),
+                EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 26, 12, 0, 0)}
             };
-            DataSource.Add(appointment);
-        }
-        public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
-        {
-            Dictionary<string, object> attributes = new Dictionary<string, object>();
-            if (CurrentView == View.Agenda)
-            {
-                attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
-            }
-            else
-            {
-                attributes.Add("style", "background: " + args.Data.CategoryColor);
-            }
-            args.Attributes = attributes;
         }
 
-    }
+        }
+

@@ -8,6 +8,7 @@ namespace RecksWebservice
         private double currentHoursScheduled = 0;
         private int maximumHours = 19;
 		private bool legal = true;
+
         public User()
 		{
 
