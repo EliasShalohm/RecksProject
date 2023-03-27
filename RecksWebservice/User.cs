@@ -5,21 +5,27 @@ namespace RecksWebservice
 	public class User
 	{
         private List<Class> currentClasses = new List<Class>();
-        private int currentHoursScheduled = 0;
+        private double currentHoursScheduled = 0;
         private int maximumHours = 19;
+		private bool legal = true;
 
         public User()
 		{
 
 		}
        
-		public void AddClass()
+		public void AddClass(Class @class)
 		{
+			currentClasses.Add(@class);
+			currentHoursScheduled += @class.GetCredits();
 		}
 
 		public void CheckIfHoursAreLegal()
 		{
-
+			if (currentHoursScheduled > maximumHours)
+			{
+				legal = false;
+			}
 		}
 
 		public void DisplayHours()
@@ -37,9 +43,9 @@ namespace RecksWebservice
 
 		}
 
-		public void RemoveClass()
+		public void RemoveClass(Class @class)
 		{
-
+			currentClasses.Remove(@class);
 		}
 
 		private void UpdateUI()
