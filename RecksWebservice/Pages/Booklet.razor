@@ -121,6 +121,23 @@
 		await Task.Run(() => classDataHandler.GetBookletData());
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
+
+
+		// THIS WAS TO TEST LOOPING OVER ALL SEMESTERS/DEPARTMENTS TO SEE IF ANYTHING THROWS AN ERROR. (NO ERRORS WERE FOUND)
+
+		/*foreach (var semester in semesterList)
+		{
+			string semesterName = semester.ToString(); //Prevents calling .ToString() more than once.
+
+			foreach (var department in departmentList)
+			{
+				string departmentName = department.ToString(); //Prevents calling .ToString() more than once.
+				_selectedSemester = semesterName;
+				_selectedDepartment = departmentName;
+				Console.WriteLine("WE ARE IN SEMESTER: " + semesterName + " AND DEPARTMENT: " + departmentName);
+				await FillClasses();
+			}
+		}*/
 	}
 	private void ResetLists()
 	{
