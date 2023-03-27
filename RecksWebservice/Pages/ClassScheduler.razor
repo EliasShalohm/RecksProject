@@ -25,7 +25,27 @@
 		border: none;
 		font-family: Cambria;
 	}
+
+	.e-grid .e-rowcell.color_orange {
+		color: orangered;
+	}
+	.e-grid .e-rowcell.color_red {
+		color: red;
+	}
+	.e-grid .e-rowcell.color_blue {
+		color: blue;
+	}
+	.e-grid .e-rowcell.color_green {
+		color: green;
+	}
+	.e-grid .e-rowcell.color_purple {
+		color: purple;
+	}
+	.e-grid .e-rowcell.color_gold {
+		color: gold;
+	}
 </style>
+
 
 <h3>Class Scheduler</h3>
 
@@ -36,43 +56,83 @@
 <button class="buttons">Edit Class</button>
 
 <div align="right" class="col-lg-12 control-section">
-	<SfGrid DataSource="@calTest">
+	<SfGrid @ref="@myGrid" DataSource="@ScheduleDataGridData" onselect="">
 		<GridColumns>
 			<GridColumn Field="@nameof(OrganizedCalendar.Time)" HeaderText="Time"
-				TextAlign="TextAlign.Left" Width="25">
+						TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true">
 			</GridColumn>
-			<GridColumn  HeaderText="Monday"
-						TextAlign="TextAlign.Left" Width="50">
+			<GridColumn Field="@nameof(OrganizedCalendar.Monday)" HeaderText="Monday"
+						TextAlign="TextAlign.Center" Width="50">
 			</GridColumn>
-			<GridColumn  HeaderText="Tuesday"
-				TextAlign="TextAlign.Left" Width="50">
+			<GridColumn Field="@nameof(OrganizedCalendar.Tuesday)" HeaderText="Tuesday"
+						TextAlign="TextAlign.Center" Width="50">
 			</GridColumn>
-			<GridColumn  HeaderText="Wednesday"
-						TextAlign="TextAlign.Left" Width="50">
+			<GridColumn Field="@nameof(OrganizedCalendar.Wednesday)" HeaderText="Wednesday"
+						TextAlign="TextAlign.Center" Width="50">
 			</GridColumn>
-			<GridColumn  HeaderText="Thursday"
-						TextAlign="TextAlign.Left" Width="50">
+			<GridColumn Field="@nameof(OrganizedCalendar.Thursday)" HeaderText="Thursday"
+						TextAlign="TextAlign.Center" Width="50">
 			</GridColumn>
-			<GridColumn  HeaderText="Friday"
-						TextAlign="TextAlign.Left" Width="50">
+			<GridColumn Field="@nameof(OrganizedCalendar.Friday)" HeaderText="Friday"
+						TextAlign="TextAlign.Center" Width="50">
 			</GridColumn>
 		</GridColumns>
+		<GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"
+			Mode="EditMode.Batch"></GridEditSettings>
 	</SfGrid>
+
+
+	<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
+	<button class="btn btn-primary" @onclick="SetCellValue">BySetCellValue</button>
+	<button class="btn btn-primary" @onclick="DataSourceSetValue">ByDataSource</button>
+	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
+	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
+	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>
+
 </div>
 
 <br/>
 
 @code {
-	public View CurrentView { get; set; } = View.Week;
-	private DateTime CurrentDate { get; set; }
-	public List<OrganizedCalendar> calTest = new ScheduleFiller().GetCalendar();
+	public SfGrid<OrganizedCalendar> myGrid { get; set; }
+	public List<OrganizedCalendar> ScheduleDataGridData = new ScheduleFiller().GetCalendar();
+	public string cellValue { get; set; }
+
+	private void BatchSaveMethod()
+	{
+		myGrid.EndEditAsync();
+	}
+	private void UpdateCell()
+	{
+		myGrid.UpdateCellAsync(0, "MondayTime", "UpdateCell!");
+	}
+
+	private void SetCellValue() //Doesn't do anything
+	{
+		myGrid.SetCellValueAsync("Astronomy", "MondayTime", "SetCellValue!");
+		myGrid.Refresh();
+	}
+
+	private void DataSourceSetValue()
+	{
+		ScheduleDataGridData.Where(x => x.Monday == "Astronomy").First().Monday = "DataSourceSetValue!";
+		myGrid.Refresh();
+	}
+	private void CurrentViewDataSetValue()
+	{
+		((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "Astronomy").First()).Monday = "DataSourceSetValue!"; ;
+		myGrid.Refresh();
+	}
+
+	private void GetValueCell()
+	{
+		cellValue = ((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "7:00 AM").First()).Monday;
+	}
 
 	private List<Class> classes { get; set; }
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		CurrentDate = DateTime.Today;
-
 	}
 	
 	public List<Class> CompareClasses()
@@ -91,14 +151,7 @@
 		//}
 		return conflictingClasses;
 	}
-
-	public void ReportConflictingClasses(List<Class> conflictingClasses)
-	{
-		foreach (Class classObj in conflictingClasses)
-		{
-			Debug.WriteLine("Conflicting class: " + classObj.GetClassName());
-		}
-	}
+	
 
 	//public void SubmitClasses(Class classObj)
 	//{
@@ -112,7 +165,7 @@
 	//		};
 	//	//test.Add(appointment);
 	//}
-	//public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
+	//public void OnEventRendered(EventRenderedArgs<OrganizedCalendar> args)
 	//{
 	//	Dictionary<string, object> attributes = new Dictionary<string, object>();
 	//	if (CurrentView == View.Agenda)
