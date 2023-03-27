@@ -1,4 +1,5 @@
 using RecksWebservice.Types;
+using Syncfusion.Blazor.Data;
 
 namespace RecksWebservice.Data
 {
@@ -47,12 +48,20 @@ namespace RecksWebservice.Data
 
 		private void FillClassData(string htmlData, string Semester, string Department)
 		{
-			Console.WriteLine(htmlData); //For testing class values.
+			//Console.WriteLine(htmlData); //For testing class values.
 
-			var semesterName = Semester.Split(' ')[0];
+			var semesterSplit = Semester.Split(' ');
 			int startIndex = htmlData.LastIndexOf("--");
-			int endIndex = htmlData.LastIndexOf(semesterName);
+			string toMatch = "";
+			for (int i = 0; i < semesterSplit.Length - 1; i++)
+			{
+				toMatch += semesterSplit[i] + " ";
+			}
+			toMatch += " " + semesterSplit[semesterSplit.Length - 1]; 
+			int endIndex = htmlData.IndexOf(toMatch + "   " + Department);
+
 			//The "+2" Neglects to include the "--" as starting index; for easier reading.
+			Console.WriteLine(startIndex + "   " +  endIndex + toMatch);
 			htmlData = htmlData.Substring(startIndex, endIndex - startIndex);
 			string[] unfilteredClasses = htmlData.Split("\n");
 
@@ -91,13 +100,21 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 				string line = unfilteredClasses[i];
 				if (!line.Contains("*") && !string.IsNullOrWhiteSpace(line)) //Is not *** Comment "Class"
 				{
-					if (!line.Contains("LAB")) //Regulars
-						previousClass = ProcessClassFromLine(line);
+					if (!line.Contains("LAB")) //Regular
+					{
+						Class processedClass = ProcessClassFromLine(line);
+						if (processedClass != null)
+							previousClass = processedClass;
+					}
 					else //Labs
 					{
 						//Checking If LAB Is Not Dependant On Previous Class
 						if (IsLabStandardClass(line))
-							previousClass = ProcessClassFromLine(line);
+						{
+							Class processedClass = ProcessClassFromLine(line);
+							if (processedClass != null)
+								previousClass = processedClass;
+						}
 						else
 							previousClass.AddLab(ProcessLabFromLine(line)); ///Not entirely functional {!}
 					}
@@ -108,6 +125,13 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 				}
 
 			}
+
+			for (int i = 0; i < classes.Count; i++)
+			{
+				//classes[i].PrintTestValues();
+
+			}
+
 		}
 
 		#region Filling & Getting Semester and Department Data
@@ -202,8 +226,8 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 			string availableSlots = line.Substring(0, 3).Trim();
 			string takenSlots = line.Substring(6, 3).Trim();
 
-			Console.WriteLine(availableSlots.Length + " " + takenSlots.Length);
-			Console.WriteLine(line);
+			//Console.WriteLine(availableSlots.Length + " " + takenSlots.Length);
+			//Console.WriteLine(line);
 			if (availableSlots.Length == 0 && takenSlots.Length == 0) { return null; }
 			// default taken to 0 if its empty
 			if (takenSlots.Length == 0)
@@ -247,10 +271,12 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 				newClass.SetClassSection(int.Parse(classSection));
 
 				//Course Title (Ie. DISCRETE STRUCTURES, NUMERICAL METHODS, etc.)
+				if (lastIndexOfLine < 55) { return newClass; }
 				string courseTitle = line.Substring(30, 25).Trim();
 				newClass.SetCourseTitle(courseTitle);
 
 				//Credits (Ie. 1.0, 2.0, 3.0, 1-6, etc.)
+				if (lastIndexOfLine < 59) { return newClass; }
 				string classCredits = line.Substring(55, 4).Trim();
 				if (classCredits.IndexOf("-") > 0) { newClass.SetCredits(0); }
 				else { newClass.SetCredits(double.Parse(classCredits)); }
@@ -267,11 +293,13 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 					newClass.SetDays(days);
 
 					//Room No. (1202, etc.)
+					if (lastIndexOfLine < 83) { return newClass; }
 					string roomNumber = line.Substring(79, 4).Trim();
 					newClass.SetRoomNumber(roomNumber);
 
 					//Course Building (NICHOLSON, etc.)
-					string courseBuilding = line.Substring(74, 15).Trim();
+					if (lastIndexOfLine < 99) { return newClass; }
+					string courseBuilding = line.Substring(84, 15).Trim();
 					newClass.SetCourseBuilding(courseBuilding);
 
 					var temp = line.Substring(60, 12).Trim().Split('-');
@@ -304,19 +332,26 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 		{
 			Class createdClass = new();
 
-			List<Day> days = GetDaysFromString(line);
-			createdClass.SetDays(days);
+			bool isTBAClass = false;
+			if (line.IndexOf("TBA") > 0) { isTBAClass = true; }
 
-			string startTime = line.Substring(60, 4).Trim();
-			string endTime = line.Substring(65, 4).Trim();
-			bool isNight = false;
-			if (line[69] == 'N')
+			if (isTBAClass) { createdClass.SetTBAStatus(true); }
+			else
 			{
-				isNight = true;
+				List<Day> days = GetDaysFromString(line);
+				createdClass.SetDays(days);
+
+				string startTime = line.Substring(60, 4).Trim();
+				string endTime = line.Substring(65, 4).Trim();
+				bool isNight = false;
+				if (line[69] == 'N')
+				{
+					isNight = true;
+				}
+				createdClass.SetStartHours(startTime.Replace("N", ""));
+				createdClass.SetEndHours(endTime.Replace("N", ""));
+				createdClass.SetNightClass(isNight);
 			}
-			//createdClass.SetHour(startTime);
-			//createdClass.SetEndTime(endTime);
-			createdClass.SetNightClass(isNight);
 			return createdClass;
 		}
 		#endregion

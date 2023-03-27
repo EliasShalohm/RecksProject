@@ -169,7 +169,11 @@ namespace RecksWebservice.Types
 
             Console.WriteLine($"isNightClass: {CheckNightClassState()}");
 
-            if (GetLabs().Count > 0)
+			Console.WriteLine($"RoomNumber: {GetRoomNumber()}");
+
+			Console.WriteLine($"building: {GetCourseBuilding()}");
+
+			if (GetLabs().Count > 0)
             {
                 Class lab = GetLabs().First();
 				Console.WriteLine($"Lab ----------------------- Lab");
