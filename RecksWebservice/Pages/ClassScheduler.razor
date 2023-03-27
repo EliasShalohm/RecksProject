@@ -5,10 +5,12 @@
 @using System.Diagnostics;
 @using RecksWebservice.Types;
 @using System.Collections.Generic
+@using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Schedule
 @using Syncfusion.Blazor.Calendars
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Data
+@using static RecksWebservice.Types.ScheduleFiller;
 <style>
 	h3 {
 		font-family: Cambria;
@@ -34,14 +36,28 @@
 <button class="buttons">Edit Class</button>
 
 <div align="right" class="col-lg-12 control-section">
-	<SfSchedule TValue="AppointmentData" Width="80%" Height="1000px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="24:00">
-		<ScheduleEvents TValue="AppointmentData" EventRendered="OnEventRendered"></ScheduleEvents>
-		<ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
-		<ScheduleViews>
-			<ScheduleView Option="View.Week"></ScheduleView>
-			<ScheduleView Option="View.WorkWeek"></ScheduleView>
-		</ScheduleViews>
-	</SfSchedule>
+	<SfGrid DataSource="@calTest">
+		<GridColumns>
+			<GridColumn Field="@nameof(OrganizedCalendar.Time)" HeaderText="Time"
+				TextAlign="TextAlign.Left" Width="25">
+			</GridColumn>
+			<GridColumn  HeaderText="Monday"
+						TextAlign="TextAlign.Left" Width="50">
+			</GridColumn>
+			<GridColumn  HeaderText="Tuesday"
+				TextAlign="TextAlign.Left" Width="50">
+			</GridColumn>
+			<GridColumn  HeaderText="Wednesday"
+						TextAlign="TextAlign.Left" Width="50">
+			</GridColumn>
+			<GridColumn  HeaderText="Thursday"
+						TextAlign="TextAlign.Left" Width="50">
+			</GridColumn>
+			<GridColumn  HeaderText="Friday"
+						TextAlign="TextAlign.Left" Width="50">
+			</GridColumn>
+		</GridColumns>
+	</SfGrid>
 </div>
 
 <br/>
@@ -49,50 +65,16 @@
 @code {
 	public View CurrentView { get; set; } = View.Week;
 	private DateTime CurrentDate { get; set; }
-	private List<AppointmentData> DataSource = new List<AppointmentData>();
-	private List<Class> classes = new List<Class>();
+	public List<OrganizedCalendar> calTest = new ScheduleFiller().GetCalendar();
+
+	private List<Class> classes { get; set; }
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		CurrentDate = DateTime.Today;
-	}
-
-	public void SetClasses(List<Class> classList)
-	{
-		classes = classList;
-		DataSource = new List<AppointmentData>()
-
-		///Values below currently do NOT appear on schedule visualizer
-		{
-			new AppointmentData { Id = 1, Subject = "Testing", StartTime = new DateTime(
-					DateTime.Now.Year,
-					DateTime.Now.Month, 22, 9, 30, 0),
-				EndTime = new DateTime(
-					DateTime.Now.Year,
-					DateTime.Now.Month, 22, 10, 30, 0)},
-			new AppointmentData { Id = 2, Subject = "Conference", StartTime = new DateTime(
-					DateTime.Now.Year,
-					DateTime.Now.Month, 24, 10, 30, 0),
-				EndTime = new DateTime(
-					DateTime.Now.Year,
-					DateTime.Now.Month, 24, 12, 0, 0)},
-		};
-
-		///Commented for testing values elsewhere.
-		//foreach (Class classObj in classes)
-		//{
-		//	AppointmentData appointment = new AppointmentData()
-		//		{
-		//			Id = classObj.GetClassID(),
-		//			Subject = classObj.GetClassName(),
-		//			StartTime = classObj.GetStartTimes()[0], ///Reading 0'th index, which may need fixing
-		//			EndTime = classObj.GetEndTimes()[0], ///Reading 0'th index, which may need fixing
-		//			CategoryColor = classObj.GetColor(),
-		//		};
-		//	DataSource.Add(appointment);
-		//}
 
 	}
+	
 	public List<Class> CompareClasses()
 	{
 		List<Class> conflictingClasses = new List<Class>();
@@ -109,6 +91,7 @@
 		//}
 		return conflictingClasses;
 	}
+
 	public void ReportConflictingClasses(List<Class> conflictingClasses)
 	{
 		foreach (Class classObj in conflictingClasses)
@@ -117,31 +100,31 @@
 		}
 	}
 
-	public void SubmitClasses(Class classObj)
-	{
-		classes.Add(classObj);
-		AppointmentData appointment = new AppointmentData()
-			{
-				Id = int.Parse(classObj.GetClassID()),
-				Subject = classObj.GetClassName(),
-				//StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
-				//EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
-				CategoryColor = classObj.GetColor(),
-			};
-		DataSource.Add(appointment);
-	}
-	public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
-	{
-		Dictionary<string, object> attributes = new Dictionary<string, object>();
-		if (CurrentView == View.Agenda)
-		{
-			attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
-		}
-		else
-		{
-			attributes.Add("style", "background: " + args.Data.CategoryColor);
-		}
-		args.Attributes = attributes;
-	}
+	//public void SubmitClasses(Class classObj)
+	//{
+	//	classes.Add(classObj);
+	//		{
+	//			Id = int.Parse(classObj.GetClassID()),
+	//			Subject = classObj.GetClassName(),
+	//			//StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
+	//			//EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
+	//			CategoryColor = classObj.GetColor(),
+	//		};
+	//	//test.Add(appointment);
+	//}
+	//public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
+	//{
+	//	Dictionary<string, object> attributes = new Dictionary<string, object>();
+	//	if (CurrentView == View.Agenda)
+	//	{
+	//		attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
+	//	}
+	//	else
+	//	{
+	//		attributes.Add("style", "background: " + args.Data.CategoryColor);
+	//	}
+	//	args.Attributes = attributes;
+	//}
 
+	
 }
