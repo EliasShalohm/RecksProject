@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using Syncfusion.Blazor.Grids;
-using System.Collections.Generic;
-using System.Linq;
-using static RecksWebservice.Pages.ClassScheduler;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+﻿#pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
 
 namespace RecksWebservice.Types
@@ -24,14 +19,6 @@ namespace RecksWebservice.Types
 	{
 		public List<OrganizedCalendar> GetCalendar()
 		{
-			Class t = new Class();
-			t.SetDays(new List<Day> { Day.Monday, Day.Wednesday, Day.Friday });
-			t.SetCourseTitle("Astronomy");
-			t.SetStartHours("800");
-			t.SetEndHours("1200");
-
-
-			ProcessClassTimes(t);
 			return Calendar;
 		}
 

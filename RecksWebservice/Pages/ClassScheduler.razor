@@ -10,6 +10,7 @@
 @using Syncfusion.Blazor.Calendars
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Data
+@using System.Dynamic;
 @using static RecksWebservice.Types.ScheduleFiller;
 <style>
 	h3 {
@@ -24,25 +25,9 @@
 		color: white;
 		border: none;
 		font-family: Cambria;
-	}
-
-	.e-grid .e-rowcell.color_orange {
-		color: orangered;
-	}
-	.e-grid .e-rowcell.color_red {
-		color: red;
-	}
-	.e-grid .e-rowcell.color_blue {
-		color: blue;
-	}
-	.e-grid .e-rowcell.color_green {
-		color: green;
-	}
-	.e-grid .e-rowcell.color_purple {
-		color: purple;
-	}
-	.e-grid .e-rowcell.color_gold {
-		color: gold;
+		align-content:flex-end;
+		align-self:flex-end;
+		width: fit-content;
 	}
 </style>
 
@@ -57,6 +42,7 @@
 
 <div align="right" class="col-lg-12 control-section">
 	<SfGrid @ref="@myGrid" DataSource="@ScheduleDataGridData" onselect="">
+		<GridEvents TValue="OrganizedCalendar"></GridEvents>
 		<GridColumns>
 			<GridColumn Field="@nameof(OrganizedCalendar.Time)" HeaderText="Time"
 						TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true">
@@ -77,7 +63,7 @@
 						TextAlign="TextAlign.Center" Width="50">
 			</GridColumn>
 		</GridColumns>
-		<GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"
+		<GridEditSettings AllowAdding="true" AllowEditing="false" AllowDeleting="true"
 			Mode="EditMode.Batch"></GridEditSettings>
 	</SfGrid>
 
@@ -88,7 +74,6 @@
 	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
 	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
 	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>
-
 </div>
 
 <br/>
@@ -109,7 +94,7 @@
 
 	private void SetCellValue() //Doesn't do anything
 	{
-		myGrid.SetCellValueAsync("Astronomy", "MondayTime", "SetCellValue!");
+		myGrid.SetCellValueAsync("8:00 AM", "Monday", "SetCellValue!");
 		myGrid.Refresh();
 	}
 
@@ -126,7 +111,7 @@
 
 	private void GetValueCell()
 	{
-		cellValue = ((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "7:00 AM").First()).Monday;
+		cellValue = ((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "Astronomy").First()).Monday;
 	}
 
 	private List<Class> classes { get; set; }

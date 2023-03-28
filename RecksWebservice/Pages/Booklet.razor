@@ -58,16 +58,19 @@
 		</div>
 		<div class="row">
 			<div id="class-data" class="col-md-6">
-				<select name="classes" id="classes" @onchange="SelectSemester">
+				<select name="classes" id="classes">
 					<option disabled selected>Class</option>
 					@foreach (var visibleClass in classList)
 					{
-						string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
-						<option value="@name">@name</option>
+						string name = @visibleClass.GetClassName().ToString(); //Prevents calling .ToString() more than once.
+						<option value="@name"></option>
 					}
 				</select>
-
 			</div>
+
+			<ClassScheduler>
+
+			</ClassScheduler>
 		</div>
 	</div>
 
@@ -109,7 +112,7 @@
 			await FillClasses();
 		}
 	}
-	private async Task FillClasses() //May or may not need adjustments.
+	private async Task FillClasses()
 	{
 		await Task.Run(() => classDataHandler.GetClassData(_selectedSemester, _selectedDepartment));
 		classList.Clear();
@@ -117,7 +120,6 @@
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		ResetLists(); //Cleaning the lists each time the page is reopened.
 		await Task.Run(() => classDataHandler.GetBookletData());
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
@@ -126,11 +128,11 @@
 		// THIS WAS TO TEST LOOPING OVER ALL SEMESTERS/DEPARTMENTS TO SEE IF ANYTHING THROWS AN ERROR. (NO ERRORS WERE FOUND)
 
 		/*foreach (var semester in semesterList)
-		{
+			{
 			string semesterName = semester.ToString(); //Prevents calling .ToString() more than once.
 
 			foreach (var department in departmentList)
-			{
+				{
 				string departmentName = department.ToString(); //Prevents calling .ToString() more than once.
 				_selectedSemester = semesterName;
 				_selectedDepartment = departmentName;
@@ -138,15 +140,6 @@
 				await FillClasses();
 			}
 		}*/
-	}
-	private void ResetLists()
-	{
-		semesterList.Clear();
-		semesterList = new();
-		departmentList.Clear();
-		departmentList = new();
-		classList.Clear();
-		classList = new();
 	}
 
 	//After code block execution, semester & department lists should automatically fill themselves out accordingly.
