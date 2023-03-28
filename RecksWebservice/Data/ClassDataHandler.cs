@@ -1,13 +1,4 @@
-using Microsoft.Extensions.Options;
-using Microsoft.JSInterop;
 using RecksWebservice.Types;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-using Syncfusion.Blazor.Schedule;
 
 namespace RecksWebservice.Data
 {
@@ -65,33 +56,33 @@ namespace RecksWebservice.Data
 			htmlData = htmlData.Substring(startIndex, endIndex - startIndex);
 			string[] unfilteredClasses = htmlData.Split("\n");
 
-			/* Test Classes !(Fall 2023 -> Astronomy)!
-				 ENRL  COURSE           SEC						   HR     TIME		  DAYS							 SPECIAL
-			AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM	BUILDING    ENROLLMENT     INSTRUCTOR
-			----------------------------------------------------------------------------------------------------------------------------------
-			300        ASTR 1101         1  THE SOLAR SYSTEM       3.0   830 - 0920   M W F		0130	NICHOLSON					TURLEY C
-			300        ASTR 1101         2  THE SOLAR SYSTEM       3.0   130 - 0250    T TH		0130	NICHOLSON					TURLEY C
-			300        ASTR 1102         1  STELLAR ASTRONOMY      3.0  1230 - 0120   M W F		0130	NICHOLSON					TURLEY C
-			193        ASTR 1102         2  STELLAR ASTRONOMY      3.0   900 - 1020    T TH		0016	LOCKETT						BURNS E
-			 25        ASTR 1108 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  M			0365	NICHOLSON					TURLEY C
-			 25        ASTR 1108 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  T			0365	NICHOLSON					TURLEY C
-			 25        ASTR 1109 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  W			0365	NICHOLSON					TURLEY C
-			 25        ASTR 1109 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  TH		0365	NICHOLSON					TURLEY C
-			 15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130 - 0250   T TH		0118	NICHOLSON					
-			 10        ASTR 4261         1  MOD OBSERVATIONAL T    3.0   230 - 0320       F		0262	NICHOLSON					PENNY M
-								 LAB                                     730 - 1020N  TW		0262	NICHOLSON					PENNY M
-				  *** ASTR 7741 * **CROSS - LISTED WITH PHYS 7741
-			 15        ASTR 7741         1  STELLAR ASTROPHYSICS   3.0  1130 - 1220   M W F  0106 NICHOLSON CHATZOPOULOS
+/* Test Classes !(Fall 2023 -> Astronomy)!
+	ENRL  COURSE           SEC						   HR     TIME		  DAYS							 SPECIAL
+AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM	BUILDING    ENROLLMENT     INSTRUCTOR
+----------------------------------------------------------------------------------------------------------------------------------
+300        ASTR 1101         1  THE SOLAR SYSTEM       3.0   830 - 0920   M W F		0130	NICHOLSON					TURLEY C
+300        ASTR 1101         2  THE SOLAR SYSTEM       3.0   130 - 0250    T TH		0130	NICHOLSON					TURLEY C
+300        ASTR 1102         1  STELLAR ASTRONOMY      3.0  1230 - 0120   M W F		0130	NICHOLSON					TURLEY C
+193        ASTR 1102         2  STELLAR ASTRONOMY      3.0   900 - 1020    T TH		0016	LOCKETT						BURNS E
+25        ASTR 1108 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  M			0365	NICHOLSON					TURLEY C
+25        ASTR 1108 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  T			0365	NICHOLSON					TURLEY C
+25        ASTR 1109 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  W			0365	NICHOLSON					TURLEY C
+25        ASTR 1109 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  TH		0365	NICHOLSON					TURLEY C
+15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130 - 0250   T TH		0118	NICHOLSON					
+10        ASTR 4261         1  MOD OBSERVATIONAL T    3.0   230 - 0320       F		0262	NICHOLSON					PENNY M
+					LAB                                     730 - 1020N  TW		0262	NICHOLSON					PENNY M
+	*** ASTR 7741 * **CROSS - LISTED WITH PHYS 7741
+15        ASTR 7741         1  STELLAR ASTROPHYSICS   3.0  1130 - 1220   M W F  0106 NICHOLSON CHATZOPOULOS
 
-				  ***ASTR 7777 * **CROSS - LISTED WITH PHYS 7777
-			 15        ASTR 7777 SEM     1  SEM: ASTR & ASTROPHY   1 - 6  1200 - 0120    T     0262 NICHOLSON CHATZOPOULOS
-			*//* Summer Class Exceptions
-			----------------------------------------------------------------------------------------------------------------------------------
-					 SESSION  B  OFFERINGS BELOW    05/22/2023 - 06/24/2023
-			23     7  ASTR 1101         1  THE SOLAR SYSTEM       3.0  1100-1230   MTWTF  0108 NICHOLSON
-					 SESSION  C  OFFERINGS BELOW    07/03/2023 - 08/05/2023
-			25     5  ASTR 1102         1  STELLAR ASTRONOMY      3.0  1100-1230   MTWTF  0108 NICHOLSON
-			*/
+	***ASTR 7777 * **CROSS - LISTED WITH PHYS 7777
+15        ASTR 7777 SEM     1  SEM: ASTR & ASTROPHY   1 - 6  1200 - 0120    T     0262 NICHOLSON CHATZOPOULOS
+*//* Summer Class Exceptions
+----------------------------------------------------------------------------------------------------------------------------------
+		SESSION  B  OFFERINGS BELOW    05/22/2023 - 06/24/2023
+23     7  ASTR 1101         1  THE SOLAR SYSTEM       3.0  1100-1230   MTWTF  0108 NICHOLSON
+		SESSION  C  OFFERINGS BELOW    07/03/2023 - 08/05/2023
+25     5  ASTR 1102         1  STELLAR ASTRONOMY      3.0  1100-1230   MTWTF  0108 NICHOLSON
+*/
 
 			//Going through each class in the table. This setup assumes there is no class list that BEGINS with a lab.
 			Class previousClass = new();
@@ -203,7 +194,7 @@ namespace RecksWebservice.Data
 			}
 			return days;
 		}
-		private Class ProcessClassFromLine(string line) ///Requires work {!}
+		private Class ProcessClassFromLine(string line)
 		{
 			int lastIndexOfLine = line.Length;
 
@@ -220,10 +211,10 @@ namespace RecksWebservice.Data
 				takenSlots = "0";
 			}
 
-			// make sure that class isnt on hold
+			//Check for if class is on Hold (H)
 			if (availableSlots == "(H)")
 			{
-				Console.WriteLine("this line is on hold, ignore" + line);
+				Console.WriteLine("this line is on hold, ignore " + line);
 			}
 			else
 			{
@@ -289,21 +280,16 @@ namespace RecksWebservice.Data
 					if (!startTime.Contains('N') && !endTime.Contains('N'))
 						newClass.SetNightClass(false);
 					else
-					newClass.SetNightClass(true);
-					newClass.SetStartTime(startTime);
-					newClass.SetEndTime(endTime);
-					
+						newClass.SetNightClass(true);
+					newClass.SetStartHours(startTime.Replace("N",""));
+					newClass.SetEndHours(endTime.Replace("N", ""));
 				}
-
-
+				
 				//Special Enrollment Ie. (100% WEB BASED, CI-WRITTEN&SPOK, CI-WRITTEN&TECH, etc.)
 				if (lastIndexOfLine < 116) { return newClass; }
 				string specialEnrollment = line.Substring(99, 17).Trim();
 				newClass.SetSpecialEnrollment(specialEnrollment);
-				//newClass.SetClassType(extraInfo);
-
-				// to prevent crashing check if line Length is longer than index accessing
-
+				
 				string professorName = line.Substring(116).Trim();
 
 				Professor professor = new Professor();
@@ -324,12 +310,12 @@ namespace RecksWebservice.Data
 			string startTime = line.Substring(60, 4).Trim();
 			string endTime = line.Substring(65, 4).Trim();
 			bool isNight = false;
-			if (line[69] == 'N') //Nice, but indexing may not be a good idea here.
+			if (line[69] == 'N')
 			{
 				isNight = true;
 			}
-			createdClass.SetStartTime(startTime);
-			createdClass.SetEndTime(endTime);
+			//createdClass.SetHour(startTime);
+			//createdClass.SetEndTime(endTime);
 			createdClass.SetNightClass(isNight);
 			return createdClass;
 		}

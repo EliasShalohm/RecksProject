@@ -13,17 +13,7 @@
 
 * Add a help button / page for user documentation
 * Link to original LSU for user convienence
-
-
-//May not be needed
-/*Console.WriteLine("--------------------");
-for (int i = 0; i < classes.Count; i++)
-{
-	Console.WriteLine("==========================");
-	Class c = classes[i];
-	c.TestForValues();
-}*/
-
+* Class reporter will need to eventually write to a file; not just spit message in console
 
 -====Class Array Indices====-
 0 = Available Slots (✔)
