@@ -5,13 +5,13 @@
 @using System.Diagnostics;
 @using RecksWebservice.Types;
 @using System.Collections.Generic
+@using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Schedule
 @using Syncfusion.Blazor.Calendars
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Data
-@using Data
-
-
+@using System.Dynamic;
+@using static RecksWebservice.Types.ScheduleFiller;
 <style>
 	h3 {
 		font-family: Cambria;
@@ -25,129 +25,144 @@
 		color: white;
 		border: none;
 		font-family: Cambria;
+		align-content:flex-end;
+		align-self:flex-end;
+		width: fit-content;
 	}
 </style>
 
+
 <h3>Class Scheduler</h3>
 
-<div align="center">
-    <button class="buttons">Add Class</button>
-    <button class="buttons">Remove Class</button>
+<button class="buttons">Add Class</button>
+<br/>
+<button class="buttons">Remove Class</button>
+<br/>
+<button class="buttons">Edit Class</button>
+
+<div align="right" class="col-lg-12 control-section">
+	<SfGrid @ref="@myGrid" DataSource="@ScheduleDataGridData" onselect="">
+		<GridEvents TValue="OrganizedCalendar"></GridEvents>
+		<GridColumns>
+			<GridColumn Field="@nameof(OrganizedCalendar.Time)" HeaderText="Time"
+						TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true">
+			</GridColumn>
+			<GridColumn Field="@nameof(OrganizedCalendar.Monday)" HeaderText="Monday"
+						TextAlign="TextAlign.Center" Width="50">
+			</GridColumn>
+			<GridColumn Field="@nameof(OrganizedCalendar.Tuesday)" HeaderText="Tuesday"
+						TextAlign="TextAlign.Center" Width="50">
+			</GridColumn>
+			<GridColumn Field="@nameof(OrganizedCalendar.Wednesday)" HeaderText="Wednesday"
+						TextAlign="TextAlign.Center" Width="50">
+			</GridColumn>
+			<GridColumn Field="@nameof(OrganizedCalendar.Thursday)" HeaderText="Thursday"
+						TextAlign="TextAlign.Center" Width="50">
+			</GridColumn>
+			<GridColumn Field="@nameof(OrganizedCalendar.Friday)" HeaderText="Friday"
+						TextAlign="TextAlign.Center" Width="50">
+			</GridColumn>
+		</GridColumns>
+		<GridEditSettings AllowAdding="true" AllowEditing="false" AllowDeleting="true"
+			Mode="EditMode.Batch"></GridEditSettings>
+	</SfGrid>
+
+
+	<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
+	<button class="btn btn-primary" @onclick="SetCellValue">BySetCellValue</button>
+	<button class="btn btn-primary" @onclick="DataSourceSetValue">ByDataSource</button>
+	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
+	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
+	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>
 </div>
 
-    <div align="center" class="col-lg-12 control-section">
-        <SfSchedule TValue="AppointmentData" Width="75%" Height="1000px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView" StartHour="6:00" EndHour="24:00">
-            <ScheduleEvents TValue="AppointmentData" EventRendered="OnEventRendered"></ScheduleEvents>
-            <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
-            <ScheduleViews>
-                <ScheduleView Option="View.Day"></ScheduleView>
-                <ScheduleView Option="View.Week"></ScheduleView>
-                <ScheduleView Option="View.WorkWeek"></ScheduleView>
-                <ScheduleView Option="View.Month"></ScheduleView>
-                <ScheduleView Option="View.Agenda"></ScheduleView>
-            </ScheduleViews>
-        </SfSchedule>
-        <br />
-    </div>
+<br/>
 
-    <br />
+@code {
+	public SfGrid<OrganizedCalendar> myGrid { get; set; }
+	public List<OrganizedCalendar> ScheduleDataGridData = new ScheduleFiller().GetCalendar();
+	public string cellValue { get; set; }
 
-    @code {
-        public View CurrentView { get; set; } = View.Week;
-        private DateTime CurrentDate { get; set; }
-        private List<AppointmentData> DataSource = new List<AppointmentData>();
-        private List<Class> classes = new List<Class>();
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            CurrentDate = DateTime.Today;
-        }
+	private void BatchSaveMethod()
+	{
+		myGrid.EndEditAsync();
+	}
+	private void UpdateCell()
+	{
+		myGrid.UpdateCellAsync(0, "MondayTime", "UpdateCell!");
+	}
 
-        public void SetClasses(List<Class> classList)
-        {
-            classes = classList;
-            DataSource = new List<AppointmentData>()
+	private void SetCellValue() //Doesn't do anything
+	{
+		myGrid.SetCellValueAsync("8:00 AM", "Monday", "SetCellValue!");
+		myGrid.Refresh();
+	}
 
-        ///Values below currently do NOT appear on schedule visualizer
-        {
-            new AppointmentData { Id = 1, Subject = "Testing", StartTime = new DateTime(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month, 22, 9, 30, 0),
-                EndTime = new DateTime(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month, 22, 10, 30, 0)},
-            new AppointmentData { Id = 2, Subject = "Conference", StartTime = new DateTime(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month, 24, 10, 30, 0),
-                EndTime = new DateTime(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month, 24, 12, 0, 0)},
-        };
+	private void DataSourceSetValue()
+	{
+		ScheduleDataGridData.Where(x => x.Monday == "Astronomy").First().Monday = "DataSourceSetValue!";
+		myGrid.Refresh();
+	}
+	private void CurrentViewDataSetValue()
+	{
+		((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "Astronomy").First()).Monday = "DataSourceSetValue!"; ;
+		myGrid.Refresh();
+	}
 
-            ///Commented for testing values elsewhere.
-            //foreach (Class classObj in classes)
-            //{
-            //	AppointmentData appointment = new AppointmentData()
-            //		{
-            //			Id = classObj.GetClassID(),
-            //			Subject = classObj.GetClassName(),
-            //			StartTime = classObj.GetStartTimes()[0], ///Reading 0'th index, which may need fixing
-            //			EndTime = classObj.GetEndTimes()[0], ///Reading 0'th index, which may need fixing
-            //			CategoryColor = classObj.GetColor(),
-            //		};
-            //	DataSource.Add(appointment);
-            //}
+	private void GetValueCell()
+	{
+		cellValue = ((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "Astronomy").First()).Monday;
+	}
 
-        }
-        public List<Class> CompareClasses()
-        {
-            List<Class> conflictingClasses = new List<Class>();
-            //for (int i = 0; i < classes.Count - 1; i++)
-            //{
-            //	for (int j = i + 1; j < classes.Count; j++)
-            //	{
-            //		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
-            //		{
-            //			conflictingClasses.Add(classes[i]);
-            //			conflictingClasses.Add(classes[j]);
-            //		}
-            //	}
-            //}
-            return conflictingClasses;
-        }
-        public void ReportConflictingClasses(List<Class> conflictingClasses)
-        {
-            foreach (Class classObj in conflictingClasses)
-            {
-                Debug.WriteLine("Conflicting class: " + classObj.GetClassName());
-            }
-        }
+	private List<Class> classes { get; set; }
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+	}
+	
+	public List<Class> CompareClasses()
+	{
+		List<Class> conflictingClasses = new List<Class>();
+		//for (int i = 0; i < classes.Count - 1; i++)
+		//{
+		//	for (int j = i + 1; j < classes.Count; j++)
+		//	{
+		//		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
+		//		{
+		//			conflictingClasses.Add(classes[i]);
+		//			conflictingClasses.Add(classes[j]);
+		//		}
+		//	}
+		//}
+		return conflictingClasses;
+	}
+	
 
-        public void SubmitClasses(Class classObj)
-        {
-            classes.Add(classObj);
-            AppointmentData appointment = new AppointmentData()
-            {
-                Id = int.Parse(classObj.GetClassID()),
-                Subject = classObj.GetClassName(),
-                //StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
-                //EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
-                CategoryColor = classObj.GetColor(),
-            };
-            DataSource.Add(appointment);
-        }
-        public void OnEventRendered(EventRenderedArgs<AppointmentData> args)
-        {
-            Dictionary<string, object> attributes = new Dictionary<string, object>();
-            if (CurrentView == View.Agenda)
-            {
-                attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
-            }
-            else
-            {
-                attributes.Add("style", "background: " + args.Data.CategoryColor);
-            }
-            args.Attributes = attributes;
-        }
+	//public void SubmitClasses(Class classObj)
+	//{
+	//	classes.Add(classObj);
+	//		{
+	//			Id = int.Parse(classObj.GetClassID()),
+	//			Subject = classObj.GetClassName(),
+	//			//StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
+	//			//EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
+	//			CategoryColor = classObj.GetColor(),
+	//		};
+	//	//test.Add(appointment);
+	//}
+	//public void OnEventRendered(EventRenderedArgs<OrganizedCalendar> args)
+	//{
+	//	Dictionary<string, object> attributes = new Dictionary<string, object>();
+	//	if (CurrentView == View.Agenda)
+	//	{
+	//		attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
+	//	}
+	//	else
+	//	{
+	//		attributes.Add("style", "background: " + args.Data.CategoryColor);
+	//	}
+	//	args.Attributes = attributes;
+	//}
 
-    }
+	
+}

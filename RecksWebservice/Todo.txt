@@ -20,34 +20,25 @@
 	* CAN BE EMPTY FOR PREVIOUS-CLASS LABS
 	* Can be put on hold (H)
 	* Can be full (F)
-
 1 = Enroll Count (✔)
 	* CAN BE EMPTY
-
 2 = Course Abbreviation/Name (✔)
-
 3 = Course Number/ID (✔)
-
 4 = Course Type (✔)
 	* Typically either LAB or SEM, but LAB does not indicate that it is a previous-class lab or an individual-class lab.
 	* SEM classes usually begin with "SEM:"
-
 5 = Section Number (✔)
 	* CAN BE EMPTY FOR PREVIOUS-CLASS LABS
 	* Always an integer
-
-6 = Course Title 
+6 = Course Title  (✔)
 	* CAN BE EMPTY FOR LABS
 	* Has multiple strings within it.
-
-7 = Hour Credits
+7 = Hour Credits (✔)
 	* Always a double (Ala 1.0, 2.0, 3.0)
-
-8 = Time {Beginning-End}
+8 = Time {Beginning-End} (✔)
 	* Always split between a '-' character into three (3) different sub-sections.
 	* Some times include a 'N" to indicate it is a night class.
 	* Should be removed of all spaces.
-
 9 = Days {MTW TH F)
 	* M = Monday
 	* T = Tuesday
@@ -56,13 +47,10 @@
 	* F = Friday
 	{!} SA = Saturday (Not Currently Supported)
 	{!} SU = Sunday (Not Currently Supported)
-
 10 = Room
 	* Always an string, due to the 0 in many of them and often letters included.
-
 11 = Special Enrollment
 	* OFTEN EMPTY, REGARDLESS OF LAB OR OTHERWISE
-
 12 = Instructor
 	* CAN BE EMPTY, REGARDLESS OF LAB OR OTHERWISE
 	* Will be difficult to differentiate between professor and special enrollment requirements.
