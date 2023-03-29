@@ -107,6 +107,7 @@
 		if (!string.IsNullOrWhiteSpace(_selectedSemester))
 		{
 			await FillClasses();
+			Console.WriteLine(classList.Count);
 		}
 	}
 	private async Task FillClasses() //May or may not need adjustments.
