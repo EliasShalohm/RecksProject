@@ -22,6 +22,8 @@ namespace RecksWebservice.Data
 			mainPage.Dispose();
 
 			FillSearchData(mainPageHtml);
+
+			return;
 		}
 		public async Task GetClassData(string Semester, string Department)
 		{
@@ -172,7 +174,7 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 		public List<Class> GetClasses() => classes;
 		#endregion
 
-		#region Alternate Methods - Need Fixing Up!
+		
 		private bool IsLabStandardClass(string line)
 		{
 			string availableSlots = line.Substring(0, 3).Trim();
@@ -354,7 +356,6 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 			}
 			return createdClass;
 		}
-		#endregion
-
+		
 	}
 }

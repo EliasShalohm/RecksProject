@@ -5,55 +5,70 @@ using System.Runtime.CompilerServices;
 
 namespace RecksWebservice.Types
 {
-    #region The "Day" Enum ; Enclosed For Space
-    public enum Day
-    {
-        Monday = 1,
-        Tuesday = 2,
-        Wednesday = 3,
-        Thursday = 4,
-        Friday = 5,
-        Saturday = 6,
-        Sunday = 7
-    }
-    #endregion
+	#region The "Day" Enum ; Enclosed For Space
+	public enum Day
+	{
+		Monday = 1,
+		Tuesday = 2,
+		Wednesday = 3,
+		Thursday = 4,
+		Friday = 5,
+		Saturday = 6,
+		Sunday = 7
+	}
+	#endregion
 
-    public class Class
-    {
-        private int _totalEnrollCount;
-        private int _availableSlots;
-        private string _className = "";
-        private string _classID = "";
-        private string _classType = "";
-        private int _section = 0;
-        private double _credits;
-        private string _courseTitle = "";
-        private List<DateTime> _startTimes; //Maybe Temporary
-        private List<DateTime> _endTimes;
-        private List<Day> _days;
-        private bool _isFull;
-        private bool _isNightClass;
-        private List<Class> _labs;
-        private Professor _professor;
-        private bool _isTBAClass = false;
-        private string _specialEnrollment;
-        private string _roomNumber;
-        private string _courseBuilding;
-        private string _colour;
+	public class Time
+	{
+		public int day { get; set; }
+		public int hour { get; set; }
+		public string minutes { get; set; }
+		public string meridium { get; set; }
+		public Time(int day, int hour, string minutes, string meridium)
+		{
+			this.day = day;
+			this.hour = hour;
+			this.minutes = minutes;
+			this.meridium = meridium;
+		}
+	}
+
+	public class Class
+	{
+		private int _totalEnrollCount;
+		private int _availableSlots;
+		private string _className = "";
+		private string _classID = "";
+		private string _classType = "";
+		private int _section = 0;
+		private double _credits;
+		private string _courseTitle = "";
+		private List<Time> _startTimes;
+		private List<Time> _endTimes;
+		private List<Day> _days;
+		private bool _isFull;
+		private bool _isNightClass;
+		private List<Class> _labs;
+		private Professor _professor;
+		private bool _isTBAClass = false;
+		private string _specialEnrollment;
+		private string _roomNumber;
+		private string _courseBuilding;
+		private string _colour;
 
 		/// <summary>
 		/// Constructors
 		/// </summary>
 		#region Constructors
 		public Class()
-        {
-            _totalEnrollCount = 0;
-            _availableSlots = 0;
-            _days = new List<Day>();
-            _isFull = false;
-            _labs = new List<Class>();
-            _professor = new Professor();
-        }
+		{
+			_totalEnrollCount = 0;
+			_availableSlots = 0;
+			_days = new List<Day>();
+			_isFull = false;
+			_labs = new List<Class>();
+			_professor = new Professor();
+		}
 		public Class(string id, string courseName, DateTime startTime, DateTime endTime, string color)
 		{
 			_classID = id;
@@ -91,70 +106,95 @@ namespace RecksWebservice.Types
 		#region Methods that are utilized for SET operations for instances.
 		public void SetClassName(string name) => _className = name;
 		public void SetClassNumber(string id) => _classID = id;
-        public void SetClassSection(int section) => _section = section;
-        public void SetTotalEnrollCount(int count) => _totalEnrollCount = count;
-        public void SetAvailableSlots(int count) => _availableSlots = count;
-        public void SetCredits(double credits) => _credits = credits;
-        public void SetCourseTitle(string title) => _courseTitle = title;
-        public void SetTBAStatus(bool isTBAClass) => _isTBAClass = isTBAClass;
-        public void AddDay(Day day) => _days.Add(day);
-        public void RemoveDay(Day day) => _days.Remove(day);
-        public void SetFullState(bool full) => _isFull = full;
-        public void SetDays(List<Day> days) => _days = days;
-        public void SetStartHours(string startTime) => _startTimes = ParseToDateTime(startTime);
-        public void SetEndHours(string endTime) => _endTimes = ParseToDateTime(endTime);
-        public void SetNightClass(bool isNightClass) => _isNightClass = isNightClass;
-        public void AssignLabs(List<Class> labs) => _labs = labs;
-        public void AddLab(Class lab) => _labs.Add(lab);   
-        public void SetProfessor(Professor professor) => _professor = professor;
-        public void SetClassType(string classInfo) => _classType = classInfo;
-        public void SetSpecialEnrollment(string specialEnrollment) => _specialEnrollment = specialEnrollment;
-        public void SetRoomNumber(string roomNumber) => _roomNumber = roomNumber;
-        public void SetCourseBuilding(string courseBuilding) => _courseBuilding = courseBuilding;
-        public void SetColor(string color) => _colour = color;
+		public void SetClassSection(int section) => _section = section;
+		public void SetTotalEnrollCount(int count) => _totalEnrollCount = count;
+		public void SetAvailableSlots(int count) => _availableSlots = count;
+		public void SetCredits(double credits) => _credits = credits;
+		public void SetCourseTitle(string title) => _courseTitle = title;
+		public void SetTBAStatus(bool isTBAClass) => _isTBAClass = isTBAClass;
+		public void AddDay(Day day) => _days.Add(day);
+		public void RemoveDay(Day day) => _days.Remove(day);
+		public void SetFullState(bool full) => _isFull = full;
+		public void SetDays(List<Day> days) => _days = days;
+		public void SetStartHours(string startTime) => _startTimes = ParseToDateTime(startTime);
+		public void SetEndHours(string endTime) => _endTimes = ParseToDateTime(endTime);
+		public void SetNightClass(bool isNightClass) => _isNightClass = isNightClass;
+		public void AssignLabs(List<Class> labs) => _labs = labs;
+		public void AddLab(Class lab) => _labs.Add(lab);
+		public void SetProfessor(Professor professor) => _professor = professor;
+		public void SetClassType(string classInfo) => _classType = classInfo;
+		public void SetSpecialEnrollment(string specialEnrollment) => _specialEnrollment = specialEnrollment;
+		public void SetRoomNumber(string roomNumber) => _roomNumber = roomNumber;
+		public void SetCourseBuilding(string courseBuilding) => _courseBuilding = courseBuilding;
+		public void SetColor(string color) => _colour = color;
 		public void SetColor(Color color) => _colour = color.ToString(); //May need adjustment for better parsing
 		#endregion
 
-		private List<DateTime> ParseToDateTime(string input)
-        {
-            var newTime = input;
+		private List<Time> ParseToDateTime(string input)
+		{
+			var newTime = input;
 			if (input[0].Equals('0'))
-                newTime = input.Substring(1);
-			
-            string hour = "";
+				newTime = input.Substring(1);
+
+			string hour = "";
 			switch (newTime.Length)
 			{
 				case 3:
 					hour = Strings.Left(newTime, 1);
 					break;
 				case 4:
-                    hour = Strings.Left(newTime, 2);
+					hour = Strings.Left(newTime, 2);
 					break;
 			}
 			string minutes = Strings.Right(newTime, 2);
 
-            List<DateTime> days = new();
-            foreach (var day in _days)
-            {
-                days.Add(new DateTime(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month,
+			List<Time> days = new();
+			foreach (var day in _days)
+			{
+				string meridium = "AM";
+				if (_isNightClass)
+				{
+					if (hour.Equals("12"))
+					{
+						meridium = "AM";
+					}
+					else
+					{
+						meridium = "PM";
+					}
+				}
+				else
+				{
+					if (hour.Equals("12"))
+					{
+
+						meridium = "PM";
+					}
+					else
+					{
+						meridium = "AM";
+					}
+				}
+
+				days.Add(new Time(
 					(int)day,
-                    int.Parse(hour),
-                    int.Parse(minutes), 0));
-            }
+					int.Parse(hour),
+					minutes,
+					meridium
+					));
+			}
 			return days;
 		}
 
 		public void PrintTestValues()
-        {
-            // Get the current enrollment count
-            int currentEnrollCount = GetTotalEnrollCount();
-            Console.WriteLine($"Current enrollment count: {currentEnrollCount}");
+		{
+			// Get the current enrollment count
+			int currentEnrollCount = GetTotalEnrollCount();
+			Console.WriteLine($"Current enrollment count: {currentEnrollCount}");
 
-            Console.WriteLine($"availabe slot count: {GetAvailableSlots()}");
+			Console.WriteLine($"availabe slot count: {GetAvailableSlots()}");
 
-            Console.WriteLine($"section: {GetSection()}");
+			Console.WriteLine($"section: {GetSection()}");
 
 			Console.WriteLine($"classId: {GetClassID()}");
 
@@ -162,27 +202,28 @@ namespace RecksWebservice.Types
 
 			Console.WriteLine($"startTime: {GetStartTimes()}");
 
-			Console.WriteLine($"ENDTime: {GetEndTimes()}");
+			Console.WriteLine($"endTime: {GetEndTimes()}");
 
 			Console.WriteLine($"isFull: {GetFullState()}");
 
 			Console.WriteLine($"isTBA: {GetTBAStatus()}");
 
-            Console.WriteLine($"isNightClass: {CheckNightClassState()}");
+			Console.WriteLine($"isNightClass: {CheckNightClassState()}");
 
-			Console.WriteLine($"RoomNumber: {GetRoomNumber()}");
+			Console.WriteLine($"roomNumber: {GetRoomNumber()}");
 
 			Console.WriteLine($"building: {GetCourseBuilding()}");
 
+
 			if (GetLabs().Count > 0)
-            {
-                Class lab = GetLabs().First();
+			{
+				Class lab = GetLabs().First();
 				Console.WriteLine($"Lab ----------------------- Lab");
-                lab.PrintTestValues();
+				lab.PrintTestValues();
 			}
 		}
 
-    }
+	}
 
 
 }
