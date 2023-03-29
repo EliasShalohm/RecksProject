@@ -45,6 +45,7 @@
 			<div id="departments" class="col-md-6">
 				<select name="department" id="department" @onchange="SelectDepartment">
 					<option disabled selected>Department</option>
+						
 					@foreach (var department in departmentList)
 					{
 						string departmentName = department.ToString(); //Prevents calling .ToString() more than once.
@@ -62,8 +63,8 @@
 					<option disabled selected>Class</option>
 					@foreach (var visibleClass in classList)
 					{
-						string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
-						<option value="@name">@name</option>
+					string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
+					<option value="@name">@name</option>
 					}
 				</select>
 
@@ -107,7 +108,6 @@
 		if (!string.IsNullOrWhiteSpace(_selectedSemester))
 		{
 			await FillClasses();
-			Console.WriteLine(classList.Count);
 		}
 	}
 	private async Task FillClasses() //May or may not need adjustments.
@@ -115,30 +115,16 @@
 		await Task.Run(() => classDataHandler.GetClassData(_selectedSemester, _selectedDepartment));
 		classList.Clear();
 		classList = classDataHandler.GetClasses();
+		StateHasChanged();
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		ResetLists(); //Cleaning the lists each time the page is reopened.
 		await Task.Run(() => classDataHandler.GetBookletData());
+		
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
 
-
-		// THIS WAS TO TEST LOOPING OVER ALL SEMESTERS/DEPARTMENTS TO SEE IF ANYTHING THROWS AN ERROR. (NO ERRORS WERE FOUND)
-
-		/*foreach (var semester in semesterList)
-		{
-			string semesterName = semester.ToString(); //Prevents calling .ToString() more than once.
-
-			foreach (var department in departmentList)
-			{
-				string departmentName = department.ToString(); //Prevents calling .ToString() more than once.
-				_selectedSemester = semesterName;
-				_selectedDepartment = departmentName;
-				Console.WriteLine("WE ARE IN SEMESTER: " + semesterName + " AND DEPARTMENT: " + departmentName);
-				await FillClasses();
-			}
-		}*/
 	}
 	private void ResetLists()
 	{

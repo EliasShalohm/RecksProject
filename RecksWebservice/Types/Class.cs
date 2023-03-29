@@ -85,6 +85,7 @@ namespace RecksWebservice.Types
         public string GetRoomNumber() => _roomNumber;
         public string GetCourseBuilding() => _courseBuilding;
         public string GetColor() => _colour;
+        public override string ToString() => _className+_classID;
 		#endregion
 
 		#region Methods that are utilized for SET operations for instances.
