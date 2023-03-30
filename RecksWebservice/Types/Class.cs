@@ -89,8 +89,8 @@ namespace RecksWebservice.Types
         public bool GetTBAStatus() => _isTBAClass;
         public string GetCourseTitle() => _courseTitle;
         public List<Day> GetDays() => _days;
-        public List<DateTime> GetStartTimes() => _startTimes;
-        public List<DateTime> GetEndTimes() => _endTimes;
+        public List<Time> GetStartTimes() => _startTimes;
+        public List<Time> GetEndTimes() => _endTimes;
         public bool GetFullState() => _isFull;
         public bool CheckNightClassState() => _isNightClass;
         public List<Class> GetLabs() => _labs;
