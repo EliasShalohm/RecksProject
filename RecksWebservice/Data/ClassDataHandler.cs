@@ -228,8 +228,6 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 			string availableSlots = line.Substring(0, 3).Trim();
 			string takenSlots = line.Substring(6, 3).Trim();
 
-			//Console.WriteLine(availableSlots.Length + " " + takenSlots.Length);
-			//Console.WriteLine(line);
 			if (availableSlots.Length == 0 && takenSlots.Length == 0) { return null; }
 			// default taken to 0 if its empty
 			if (takenSlots.Length == 0)
