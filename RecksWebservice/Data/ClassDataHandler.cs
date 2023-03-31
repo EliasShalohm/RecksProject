@@ -1,3 +1,4 @@
+using RecksWebservice.Pages;
 using RecksWebservice.Types;
 using Syncfusion.Blazor.Data;
 
@@ -22,7 +23,7 @@ namespace RecksWebservice.Data
 			mainPage.Dispose();
 
 			FillSearchData(mainPageHtml);
-
+			
 			return;
 		}
 		public async Task GetClassData(string Semester, string Department)

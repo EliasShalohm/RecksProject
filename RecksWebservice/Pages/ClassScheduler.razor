@@ -1,4 +1,4 @@
-﻿@page "/ClassData"
+﻿@page "/classScheduler"
 @using System
 @using Microsoft.AspNetCore
 @using RecksWebservice.Data
@@ -12,33 +12,7 @@
 @using Syncfusion.Blazor.Data
 @using System.Dynamic;
 @using static RecksWebservice.Types.ScheduleFiller;
-<style>
-	h3 {
-		font-family: Cambria;
-		font-weight: bold;
-		text-align: center;
-		color: #461D7C;
-	}
 
-	.buttons {
-		background-color: #461D7C;
-		color: white;
-		border: none;
-		font-family: Cambria;
-		align-content:flex-end;
-		align-self:flex-end;
-		width: fit-content;
-	}
-</style>
-
-
-<h3>Class Scheduler</h3>
-
-<button class="buttons">Add Class</button>
-<br/>
-<button class="buttons">Remove Class</button>
-<br/>
-<button class="buttons">Edit Class</button>
 
 <div align="right" class="col-lg-12 control-section">
 	<SfGrid @ref="@myGrid" DataSource="@ScheduleDataGridData" onselect="">
@@ -83,9 +57,22 @@
 <br/>
 
 @code {
+	private List<Class>? selectedClasses { get; set; }
+	private static ScheduleFiller scheduleFiller { get; set;} = new();
+	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
-	public List<OrganizedCalendar> ScheduleDataGridData = new ScheduleFiller().GetCalendar();
 	public string cellValue { get; set; }
+
+	public void ProcessClass(Class @class)
+	{
+		///Check to see if the given class conflicts with any in selectedClasses list
+		if (CompareClasses(@class)) {
+			selectedClasses.Add(scheduleFiller.ProcessClassTimes(@class));
+		} else
+		{
+			///Spit out error message for the user.
+		}
+	}
 
 	private void BatchSaveMethod()
 	{
@@ -96,7 +83,7 @@
 		myGrid.UpdateCellAsync(0, "MondayTime", "UpdateCell!");
 	}
 
-	private void SetCellValue() //Doesn't do anything
+	private void SetCellValue() ///Doesn't do anything
 	{
 		myGrid.SetCellValueAsync("8:00 AM", "Monday", "SetCellValue!");
 		myGrid.Refresh();
@@ -123,10 +110,16 @@
 	{
 		base.OnInitialized();
 	}
-	
-	public List<Class> CompareClasses()
+
+	public bool CompareClasses(Class @class)
 	{
-		List<Class> conflictingClasses = new List<Class>();
+		List<Class> conflictingClasses = new List<Class>(); //report these to error handler for a file-writeup
+		//True = Good / All Classes Are Set
+		// False = Bad / A Class Conflicts
+		foreach (var key in selectedClasses)
+		{
+			//comparisons here; if comparisons 
+		}
 		//for (int i = 0; i < classes.Count - 1; i++)
 		//{
 		//	for (int j = i + 1; j < classes.Count; j++)
@@ -138,7 +131,7 @@
 		//		}
 		//	}
 		//}
-		return conflictingClasses;
+		return true;
 	}
 	
 
