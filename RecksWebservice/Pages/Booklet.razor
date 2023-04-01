@@ -3,10 +3,11 @@
 @using System.Diagnostics;
 @using RecksWebservice.Data;
 @using RecksWebservice.Types;
-
 @inject ClassDataHandler classDataHandler
-<link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
+@inject ClassScheduler classScheduler
 @page "/booklet"
+<link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
+
 <PageTitle>LSU Booklet</PageTitle>
 <style>
     h1 {
@@ -15,19 +16,36 @@
         color: #461D7C;
     }
 
+	h3 {
+		font-family: Cambria;
+		font-weight: bold;
+		text-align: center;
+		color: #461D7C;
+	}
+
+	.buttons {
+		background-color: #461D7C;
+		color: white;
+		border: none;
+		font-family: Cambria;
+		align-content: flex-end;
+		align-self: flex-end;
+		width: fit-content;
+	}
     select {
         font-family: Cambria;
         background-color: #461D7C;
 		color: white;
     }
 </style>
+
 <body>
 	
 	<div class="container-fluid">
 		<div class="row">
 			<div id="header-text" class="col-md-12">
 				<h1 class="text-center">
-					WELCOME TO THE NEW LSU BOOKLET
+					LSU BOOKLET AND CLASS SCHEDULER
 				</h1>
 			</div>
 		</div>
@@ -58,32 +76,59 @@
 		</div>
 		<div class="row">
 			<div id="class-data" class="col-md-6">
-				<select name="classes" id="classes">
+				<select name="classes" id="classes" @bind="@_selectedClass">
 					<option disabled selected>Class</option>
 					@foreach (var visibleClass in classList)
 					{
-					string name = visibleClass.ToString(); //Prevents calling .ToString() more than once.
+						string days = "";
+						foreach (var day in visibleClass.GetDays())
+						{
+							days += " " + day.ToString().Substring(0,3);
+						}
+						string name = string.Format("Available Slots: {0} | {1} {2} | {3} {4} | {5} {6} | {7} {8}",
+						visibleClass.GetAvailableSlots(),
+						visibleClass.GetClassName(),
+						visibleClass.GetClassID(),
+						days,
+						visibleClass.GetHoursAsString(),
+						visibleClass.GetCredits(),
+						visibleClass.GetCourseBuilding(),
+						visibleClass.GetRoomNumber(),
+						visibleClass.GetProfessor().GetName());
 					<option value="@name">@name</option>
 					}
 				</select>
 			</div>
 
-			<ClassScheduler>
+			<h5 style="font-style:italic;font-size:small;">Selected Class: @_selectedClass</h5>
 
+			<h3>Class Scheduler</h3>
+
+			<button class="buttons" @onclick="AddClassToSchedule">Add Class</button>
+			<br />
+			<button class="buttons">Remove Class</button>
+			<br />
+			<button class="buttons">Edit Class</button>
+
+			<ClassScheduler>
 			</ClassScheduler>
+
 		</div>
 	</div>
 
 </body>
 
 @code {
+
 	private List<string> semesterList = new();
 	private List<string> departmentList = new();
 	private List<Class> classList = new();
-
+	private List<Class> userPickedClasses = new();
 	private string _selectedSemester = "";
 	private string _selectedDepartment = "";
-	private string _selectedClass = ""; //May need changing.
+	private string _selectedClass = "";
+
+	#region Select and Fill Methods
 	/// <summary>
 	/// Checking and Handling if Department has been selected.
 	/// </summary>
@@ -112,6 +157,7 @@
 			await FillClasses();
 		}
 	}
+
 	private async Task FillClasses()
 	{
 		classList.Clear();
@@ -119,13 +165,24 @@
 		classList = classDataHandler.GetClasses();
 		StateHasChanged();
 	}
+	#endregion
+
+	public void AddClassToSchedule() ///Need to get class that the user has selected from the list
+	{
+		var d = new Class(); ///Temporary
+		classScheduler.ProcessClass(d);
+	}
+	public void RemoveClassFromSchedule() ///Need to get from a list of classes that the user already has
+	{
+		
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await Task.Run(() => classDataHandler.GetBookletData());
 		
 		semesterList = classDataHandler.GetSemesters();
 		departmentList = classDataHandler.GetDepartments();
-
 	}
 
 	//After code block execution, semester & department lists should automatically fill themselves out accordingly.

@@ -91,7 +91,7 @@ namespace RecksWebservice.Types
         public List<Day> GetDays() => _days;
         public List<Time> GetStartTimes() => _startTimes;
         public List<Time> GetEndTimes() => _endTimes;
-        public bool GetFullState() => _isFull;
+		public bool GetFullState() => _isFull;
         public bool CheckNightClassState() => _isNightClass;
         public List<Class> GetLabs() => _labs;
         public Professor GetProfessor() => _professor;
@@ -101,6 +101,18 @@ namespace RecksWebservice.Types
         public string GetCourseBuilding() => _courseBuilding;
         public string GetColor() => _colour;
         public override string ToString() => _className+_classID;
+		public string GetHoursAsString()
+		{
+			if (_startTimes != null || _endTimes != null)
+			{
+				var start = string.Format("{0}:{1} {2}", _startTimes[0].hour, _startTimes[0].minutes, _startTimes[0].meridium);
+				var end = string.Format("{0}:{1} {2}", _endTimes[0].hour, _endTimes[0].minutes, _endTimes[0].meridium);
+				return " at " + start + " to " + end;
+			} else
+			{
+				return string.Empty;
+			}
+		}
 		#endregion
 
 		#region Methods that are utilized for SET operations for instances.

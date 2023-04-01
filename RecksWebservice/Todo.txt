@@ -1,10 +1,9 @@
-﻿* Add Dropdown of Available Classes (Field Specific)
-* Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)
+﻿* Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)
 * Display "Classes added" list
 * Account comments as larger categories for the classes below them
 
+[] Fix bug when re-selecting department, the classes list is emptied
 [] Fix re-added semester & department data every refresh. Find a way to get the control ID and force a clear.
-[] Something is wrong in the HTML GetBookletData() reading as some lines are cut off at the ends.
 
 * New Page for Displaying A Live-Drawn Schedule
 	o Preview Schedule in Other Tab?
@@ -15,30 +14,6 @@
 * Link to original LSU for user convienence
 * Class reporter will need to eventually write to a file; not just spit message in console
 
--====Class Array Indices====-
-0 = Available Slots (✔)
-	* CAN BE EMPTY FOR PREVIOUS-CLASS LABS
-	* Can be put on hold (H)
-	* Can be full (F)
-1 = Enroll Count (✔)
-	* CAN BE EMPTY
-2 = Course Abbreviation/Name (✔)
-3 = Course Number/ID (✔)
-4 = Course Type (✔)
-	* Typically either LAB or SEM, but LAB does not indicate that it is a previous-class lab or an individual-class lab.
-	* SEM classes usually begin with "SEM:"
-5 = Section Number (✔)
-	* CAN BE EMPTY FOR PREVIOUS-CLASS LABS
-	* Always an integer
-6 = Course Title  (✔)
-	* CAN BE EMPTY FOR LABS
-	* Has multiple strings within it.
-7 = Hour Credits (✔)
-	* Always a double (Ala 1.0, 2.0, 3.0)
-8 = Time {Beginning-End} (✔)
-	* Always split between a '-' character into three (3) different sub-sections.
-	* Some times include a 'N" to indicate it is a night class.
-	* Should be removed of all spaces.
 9 = Days {MTW TH F)
 	* M = Monday
 	* T = Tuesday
