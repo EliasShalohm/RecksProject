@@ -114,8 +114,8 @@
 	}
 	private async Task FillClasses()
 	{
-		await Task.Run(() => classDataHandler.GetClassData(_selectedSemester, _selectedDepartment));
 		classList.Clear();
+		await Task.Run(() => classDataHandler.GetClassData(_selectedSemester, _selectedDepartment));
 		classList = classDataHandler.GetClasses();
 		StateHasChanged();
 	}
