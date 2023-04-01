@@ -87,7 +87,7 @@ namespace RecksWebservice.Types
 			};
 		}
 
-		public void ProcessClassTimes(Class @class)
+		public Class ProcessClassTimes(Class @class)
 		{
 			Time[] startTimes = @class.GetStartTimes().ToArray();
 			Time[] endTimes = @class.GetEndTimes().ToArray();
@@ -109,8 +109,26 @@ namespace RecksWebservice.Types
 					}
 				}
 			}
+			return @class;
 		}
-		//D_
+
+		public List<Class> CompareClasses()
+		{
+			List<Class> conflictingClasses = new List<Class>();
+			//for (int i = 0; i < classes.Count - 1; i++)
+			//{
+			//	for (int j = i + 1; j < classes.Count; j++)
+			//	{
+			//		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
+			//		{
+			//			conflictingClasses.Add(classes[i]);
+			//			conflictingClasses.Add(classes[j]);
+			//		}
+			//	}
+			//}
+			return conflictingClasses;
+		}
+		//D_ Add error handling?
 	}
 }
 

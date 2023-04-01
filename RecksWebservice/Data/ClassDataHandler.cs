@@ -1,3 +1,4 @@
+using RecksWebservice.Pages;
 using RecksWebservice.Types;
 using Syncfusion.Blazor.Data;
 
@@ -22,7 +23,7 @@ namespace RecksWebservice.Data
 			mainPage.Dispose();
 
 			FillSearchData(mainPageHtml);
-
+			
 			return;
 		}
 		public async Task GetClassData(string Semester, string Department)
@@ -228,8 +229,6 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 			string availableSlots = line.Substring(0, 3).Trim();
 			string takenSlots = line.Substring(6, 3).Trim();
 
-			//Console.WriteLine(availableSlots.Length + " " + takenSlots.Length);
-			//Console.WriteLine(line);
 			if (availableSlots.Length == 0 && takenSlots.Length == 0) { return null; }
 			// default taken to 0 if its empty
 			if (takenSlots.Length == 0)
