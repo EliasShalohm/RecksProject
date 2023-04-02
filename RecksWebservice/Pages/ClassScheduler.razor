@@ -57,7 +57,7 @@
 <br/>
 
 @code {
-	private List<Class>? selectedClasses { get; set; }
+	private List<Class>? selectedClasses { get; set; } = new();
 	private static ScheduleFiller scheduleFiller { get; set;} = new();
 	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
@@ -114,23 +114,29 @@
 	public bool CompareClasses(Class @class)
 	{
 		List<Class> conflictingClasses = new List<Class>(); //report these to error handler for a file-writeup
-		//True = Good / All Classes Are Set
-		// False = Bad / A Class Conflicts
-		foreach (var key in selectedClasses)
+															//True = Good / All Classes Are Set
+															// False = Bad / A Class Conflicts
+		if (selectedClasses != null) 
 		{
-			//comparisons here; if comparisons 
+			foreach (var key in selectedClasses) ///<---- POINT OF CRASH (selectedClasses is null)
+			{
+				//comparisons here; if comparisons 
+			}
+			//for (int i = 0; i < classes.Count - 1; i++)
+			//{
+			//	for (int j = i + 1; j < classes.Count; j++)
+			//	{
+			//		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
+			//		{
+			//			conflictingClasses.Add(classes[i]);
+			//			conflictingClasses.Add(classes[j]);
+			//		}
+			//	}
+			//}
+		} else
+		{
+			return true;
 		}
-		//for (int i = 0; i < classes.Count - 1; i++)
-		//{
-		//	for (int j = i + 1; j < classes.Count; j++)
-		//	{
-		//		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
-		//		{
-		//			conflictingClasses.Add(classes[i]);
-		//			conflictingClasses.Add(classes[j]);
-		//		}
-		//	}
-		//}
 		return true;
 	}
 	

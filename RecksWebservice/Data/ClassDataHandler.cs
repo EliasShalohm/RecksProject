@@ -1,6 +1,8 @@
 using RecksWebservice.Pages;
 using RecksWebservice.Types;
 using Syncfusion.Blazor.Data;
+using Syncfusion.Blazor.RichTextEditor.Internal;
+using System.Drawing;
 
 namespace RecksWebservice.Data
 {
@@ -8,7 +10,7 @@ namespace RecksWebservice.Data
 	{
 		private List<string> semesterList = new();
 		private List<string> departmentList = new();
-		private List<Class> classes = new();
+		private Dictionary<int, Class> classes = new();
 
 		/// <summary>
 		/// Gets LSU's Booklet Data as a whole
@@ -68,34 +70,6 @@ namespace RecksWebservice.Data
 			htmlData = htmlData.Substring(startIndex, endIndex - startIndex);
 			string[] unfilteredClasses = htmlData.Split("\n");
 
-/* Test Classes !(Fall 2023 -> Astronomy)!
-	ENRL  COURSE           SEC						   HR     TIME		  DAYS							 SPECIAL
-AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM	BUILDING    ENROLLMENT     INSTRUCTOR
-----------------------------------------------------------------------------------------------------------------------------------
-300        ASTR 1101         1  THE SOLAR SYSTEM       3.0   830 - 0920   M W F		0130	NICHOLSON					TURLEY C
-300        ASTR 1101         2  THE SOLAR SYSTEM       3.0   130 - 0250    T TH		0130	NICHOLSON					TURLEY C
-300        ASTR 1102         1  STELLAR ASTRONOMY      3.0  1230 - 0120   M W F		0130	NICHOLSON					TURLEY C
-193        ASTR 1102         2  STELLAR ASTRONOMY      3.0   900 - 1020    T TH		0016	LOCKETT						BURNS E
-25        ASTR 1108 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  M			0365	NICHOLSON					TURLEY C
-25        ASTR 1108 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  T			0365	NICHOLSON					TURLEY C
-25        ASTR 1109 LAB     1  ASTRONOMY LAB          1.0   700 - 0850N  W			0365	NICHOLSON					TURLEY C
-25        ASTR 1109 LAB     2  ASTRONOMY LAB          1.0   700 - 0850N  TH		0365	NICHOLSON					TURLEY C
-15        ASTR 1401         1  PLANETARY ASTROPHYS    3.0   130 - 0250   T TH		0118	NICHOLSON					
-10        ASTR 4261         1  MOD OBSERVATIONAL T    3.0   230 - 0320       F		0262	NICHOLSON					PENNY M
-					LAB                                     730 - 1020N  TW		0262	NICHOLSON					PENNY M
-	*** ASTR 7741 * **CROSS - LISTED WITH PHYS 7741
-15        ASTR 7741         1  STELLAR ASTROPHYSICS   3.0  1130 - 1220   M W F  0106 NICHOLSON CHATZOPOULOS
-
-	***ASTR 7777 * **CROSS - LISTED WITH PHYS 7777
-15        ASTR 7777 SEM     1  SEM: ASTR & ASTROPHY   1 - 6  1200 - 0120    T     0262 NICHOLSON CHATZOPOULOS
-*//* Summer Class Exceptions
-----------------------------------------------------------------------------------------------------------------------------------
-		SESSION  B  OFFERINGS BELOW    05/22/2023 - 06/24/2023
-23     7  ASTR 1101         1  THE SOLAR SYSTEM       3.0  1100-1230   MTWTF  0108 NICHOLSON
-		SESSION  C  OFFERINGS BELOW    07/03/2023 - 08/05/2023
-25     5  ASTR 1102         1  STELLAR ASTRONOMY      3.0  1100-1230   MTWTF  0108 NICHOLSON
-*/
-
 			//Going through each class in the table. This setup assumes there is no class list that BEGINS with a lab.
 			Class previousClass = new();
 			for (int i = 1; i < unfilteredClasses.Length; i++)
@@ -123,18 +97,11 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 					}
 					if (previousClass != null)
 					{
-						classes.Add(previousClass);
+						classes.Add(i, previousClass);
 					}
 				}
-
 			}
-
-			for (int i = 0; i < classes.Count; i++)
-			{
-				//classes[i].PrintTestValues();
-
-			}
-
+			//D_
 		}
 
 		#region Filling & Getting Semester and Department Data
@@ -172,7 +139,7 @@ AVL  CNT   ABBR NUM  TYPE	NUM COURSE TITLE           CR  BEGIN-END	  MTWTFS	ROOM
 
 		public List<string> GetSemesters() => semesterList;
 		public List<string> GetDepartments() => departmentList;
-		public List<Class> GetClasses() => classes;
+		public Dictionary<int, Class> GetClasses() => classes;
 		#endregion
 
 		
