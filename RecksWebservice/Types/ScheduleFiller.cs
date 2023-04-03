@@ -123,6 +123,9 @@ namespace RecksWebservice.Types
 				{
 					int startIndex = Calendar.IndexOf(Calendar.Find(x => x.Time == combinedStartTime));
 					int endIndex = Calendar.IndexOf(Calendar.Find(x => x.Time == combinedEndTime));
+
+					///Compare Class time and round; maybe insert new time if invalid?
+
 					var calendarSlots = Calendar.Skip(startIndex).Take(endIndex - startIndex + 1);
 					foreach (var slot in calendarSlots)
 					{
