@@ -170,29 +170,9 @@ namespace RecksWebservice.Types
 				}
 				else
 				{
-					switch (hour)
+					if (int.Parse(hour) <= 6 || int.Parse(hour) == 12)
 					{
-						case "12":
-							meridium = "PM";
-							break;
-						case "1":
-							meridium = "PM";
-							break;
-						case "2":
-							meridium = "PM";
-							break;
-						case "3":
-							meridium = "PM";
-							break;
-						case "4":
-							meridium = "PM";
-							break;
-						case "5":
-							meridium = "PM";
-							break;
-						case "6":
-							meridium = "PM";
-							break;
+						meridium = "PM";
 					}
 				}
 

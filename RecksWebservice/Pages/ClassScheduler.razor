@@ -46,12 +46,9 @@
 		provide execellent use.
 	*@
 
-	<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
-	<button class="btn btn-primary" @onclick="SetCellValue">BySetCellValue</button>
 	<button class="btn btn-primary" @onclick="DataSourceSetValue">ByDataSource</button>
 	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
 	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
-	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>
 </div>
 
 <br/>
@@ -63,12 +60,12 @@
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
 	public string cellValue { get; set; }
 
-	public void ProcessClass(Class @class)
+	public void ProcessClass(Class entry)
 	{
 		///Check to see if the given class conflicts with any in selectedClasses list
-		if (CompareClasses(@class)) {
-			selectedClasses.Add(@class);
-			scheduleFiller.ProcessClassTimes(@class);
+		if (CompareClasses(entry)) {
+			selectedClasses.Add(entry);
+			ProcessClassTimes(entry);
 		} else
 		{
 			///Spit out error message for the user.
@@ -80,24 +77,62 @@
 	{
 		selectedClasses.Clear();
 		scheduleFiller.ResetCalendar();
-		
+		List<Day> days = new List<Day> { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday, Day.Saturday, Day.Sunday };
+		foreach (var day in days) {
+			int startIndex = 0;
+			int endIndex = scheduleFiller.GetCalendar().Count;
+
+			///Compare Class time and round; maybe insert new time if invalid?
+
+			var calendarSlots = scheduleFiller.GetCalendar().Skip(startIndex).Take(endIndex - startIndex + 1);
+
+			for (int i = 0; i < endIndex; i++)
+			{
+				myGrid.UpdateCellAsync(i, day.ToString(), "");
+				myGrid.EndEditAsync();
+			}
+		}
 	}
 
-	private void BatchSaveMethod()
+	public void ProcessClassTimes(Class entry)
 	{
+
+		////Test Data for easy-access.
+		//entry = new Class();
+		//entry.SetDays(new List<Day> { Day.Monday, Day.Tuesday });
+		//entry.SetStartHours("300");
+		//entry.SetEndHours("600");
+		//entry.SetClassName("TestCourse");
+		//entry.SetClassNumber("1001");
+
+		var calendar = scheduleFiller.GetCalendar();
+		Time[] startTimes = entry.GetStartTimes().ToArray();
+		Time[] endTimes = entry.GetEndTimes().ToArray();
+		for (int i = 0; i < startTimes.Length; i++)
+		{
+			var dayNumber = startTimes[i].day;
+			string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[i].hour, startTimes[i].minutes, startTimes[i].meridium);
+			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
+
+			foreach (var day in entry.GetDays())
+			{
+				int startIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedStartTime));
+				int endIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime));
+
+				///Compare Class time and round; maybe insert new time if invalid?
+				
+				for (int j = startIndex; j < endIndex + 1; j++)
+				{
+					myGrid.UpdateCellAsync(j, day.ToString(), (entry.GetClassName() + entry.GetClassID()));
+				}
+
+			}
+		}
 		myGrid.EndEditAsync();
-	}
-	private void UpdateCell()
-	{
-		myGrid.UpdateCellAsync(0, "MondayTime", "UpdateCell!");
-	}
-	
-	private void SetCellValue() ///Doesn't do anything
-	{
-		myGrid.SetCellValueAsync("8:00 AM", "Monday", "SetCellValue!");
-		myGrid.Refresh();
+		return;
 	}
 
+	#region Spare "Guide" Methods
 	private void DataSourceSetValue()
 	{
 		ScheduleDataGridData.Where(x => x.Monday == "Astronomy").First().Monday = "DataSourceSetValue!";
@@ -113,6 +148,7 @@
 	{
 		cellValue = ((OrganizedCalendar)myGrid.CurrentViewData.Where(x => ((OrganizedCalendar)x).Monday == "Astronomy").First()).Monday;
 	}
+	#endregion
 
 	private List<Class> classes { get; set; }
 	protected override void OnInitialized()
@@ -120,7 +156,7 @@
 		base.OnInitialized();
 	}
 
-	public bool CompareClasses(Class @class)
+	public bool CompareClasses(Class entry)
 	{
 		List<Class> conflictingClasses = new List<Class>(); //report these to error handler for a file-writeup
 															//True = Good / All Classes Are Set

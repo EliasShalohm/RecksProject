@@ -24,13 +24,6 @@ namespace RecksWebservice.Types
 
 		public List<OrganizedCalendar> Calendar = new()
 		{
-			new OrganizedCalendar() { Time = "1:30 AM" },
-			new OrganizedCalendar() { Time = "2:00 AM" },
-			new OrganizedCalendar() { Time = "2:30 AM" },
-			new OrganizedCalendar() { Time = "3:00 AM" },
-			new OrganizedCalendar() { Time = "3:30 AM" },
-			new OrganizedCalendar() { Time = "4:00 AM" },
-			new OrganizedCalendar() { Time = "4:30 AM" },
 			new OrganizedCalendar() { Time = "5:00 AM" },
 			new OrganizedCalendar() { Time = "5:30 AM" },
 			new OrganizedCalendar() { Time = "6:00 AM" },
@@ -64,13 +57,6 @@ namespace RecksWebservice.Types
 		{
 			Calendar = new()
 			{
-				new OrganizedCalendar() { Time = "1:30 AM" },
-				new OrganizedCalendar() { Time = "2:00 AM" },
-				new OrganizedCalendar() { Time = "2:30 AM" },
-				new OrganizedCalendar() { Time = "3:00 AM" },
-				new OrganizedCalendar() { Time = "3:30 AM" },
-				new OrganizedCalendar() { Time = "4:00 AM" },
-				new OrganizedCalendar() { Time = "4:30 AM" },
 				new OrganizedCalendar() { Time = "5:00 AM" },
 				new OrganizedCalendar() { Time = "5:30 AM" },
 				new OrganizedCalendar() { Time = "6:00 AM" },
@@ -100,42 +86,7 @@ namespace RecksWebservice.Types
 				new OrganizedCalendar() { Time = "6:00 PM" }
 			};
 		}
-		public void ProcessClassTimes(Class @class)
-		{
-			/*
-			//Test Data for easy-access.
-			@class = new Class();
-			@class.SetDays(new List<Day> { Day.Monday, Day.Tuesday });
-			@class.SetStartHours("800");
-            @class.SetEndHours("1000");
-			@class.SetCourseTitle("TestCourse");
-			*/
-
-			Time[] startTimes = @class.GetStartTimes().ToArray();
-			Time[] endTimes = @class.GetEndTimes().ToArray();
-			for (int i = 0; i < startTimes.Length; i++)
-			{
-				var dayNumber = startTimes[i].day;
-				string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[i].hour, startTimes[i].minutes, startTimes[i].meridium);
-				string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
-
-				foreach (var day in @class.GetDays())
-				{
-					int startIndex = Calendar.IndexOf(Calendar.Find(x => x.Time == combinedStartTime));
-					int endIndex = Calendar.IndexOf(Calendar.Find(x => x.Time == combinedEndTime));
-
-					///Compare Class time and round; maybe insert new time if invalid?
-
-					var calendarSlots = Calendar.Skip(startIndex).Take(endIndex - startIndex + 1);
-					foreach (var slot in calendarSlots)
-					{
-						slot.GetType().GetProperty(day.ToString()).SetValue(slot, @class.GetClassName()+@class.GetClassID());
-					}
-				}
-			}
-			return;
-		}
-
+		
 		public List<Class> CompareClasses()
 		{
 			List<Class> conflictingClasses = new List<Class>();
