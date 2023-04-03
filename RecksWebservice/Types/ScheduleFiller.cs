@@ -129,7 +129,7 @@ namespace RecksWebservice.Types
 					var calendarSlots = Calendar.Skip(startIndex).Take(endIndex - startIndex + 1);
 					foreach (var slot in calendarSlots)
 					{
-						slot.GetType().GetProperty(day.ToString()).SetValue(slot, @class.GetCourseTitle());
+						slot.GetType().GetProperty(day.ToString()).SetValue(slot, @class.GetClassName()+@class.GetClassID());
 					}
 				}
 			}
