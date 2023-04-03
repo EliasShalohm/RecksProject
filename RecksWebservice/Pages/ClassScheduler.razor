@@ -46,19 +46,19 @@
 		provide execellent use.
 	*@
 
-	@*<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
+	<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
 	<button class="btn btn-primary" @onclick="SetCellValue">BySetCellValue</button>
 	<button class="btn btn-primary" @onclick="DataSourceSetValue">ByDataSource</button>
 	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
 	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
-	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>*@
+	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>
 </div>
 
 <br/>
 
 @code {
-	private List<Class>? selectedClasses { get; set; } = new();
-	private static ScheduleFiller scheduleFiller { get; set;} = new();
+	private List<Class> selectedClasses { get; set; } = new();
+	private static ScheduleFiller scheduleFiller { get; set; } = new();
 	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
 	public string cellValue { get; set; }
@@ -67,11 +67,13 @@
 	{
 		///Check to see if the given class conflicts with any in selectedClasses list
 		if (CompareClasses(@class)) {
-			selectedClasses.Add(scheduleFiller.ProcessClassTimes(@class));
+			selectedClasses.Add(@class);
+			scheduleFiller.ProcessClassTimes(@class);
 		} else
 		{
 			///Spit out error message for the user.
 		}
+		myGrid.Refresh();
 	}
 
 	private void BatchSaveMethod()
