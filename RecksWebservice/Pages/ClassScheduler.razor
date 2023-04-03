@@ -76,6 +76,13 @@
 		myGrid.Refresh();
 	}
 
+	public void ResetCalendar()
+	{
+		selectedClasses.Clear();
+		scheduleFiller.ResetCalendar();
+		
+	}
+
 	private void BatchSaveMethod()
 	{
 		myGrid.EndEditAsync();
@@ -84,7 +91,7 @@
 	{
 		myGrid.UpdateCellAsync(0, "MondayTime", "UpdateCell!");
 	}
-
+	
 	private void SetCellValue() ///Doesn't do anything
 	{
 		myGrid.SetCellValueAsync("8:00 AM", "Monday", "SetCellValue!");
