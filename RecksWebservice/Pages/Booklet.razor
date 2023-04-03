@@ -60,7 +60,7 @@
 							{
 								days += " " + day.ToString().Substring(0,3);
 							}
-							string name = string.Format("[{0}] ",i) + string.Format("Available Slots: {0} | {1} {2} | {3} {4} | {5} {6} | {7} {8}",
+							string name = string.Format("[{0}] ", i) + string.Format("{0}/{9}| {1} {2} | {3} {4} | {5} {6} | {7} {8}",
 							visibleClass.GetAvailableSlots(),
 							visibleClass.GetClassName(),
 							visibleClass.GetClassID(),
@@ -69,8 +69,9 @@
 							visibleClass.GetCredits(),
 							visibleClass.GetCourseBuilding(),
 							visibleClass.GetRoomNumber(),
-							visibleClass.GetProfessor().GetName());
-						
+							visibleClass.GetProfessor().GetName(),
+							visibleClass.GetTotalEnrollCount());
+
 							<option value="@name">@name</option>
 						}
 					}
