@@ -62,7 +62,7 @@
 							{
 								days += " " + day.ToString().Substring(0,3);
 							}
-							string name = string.Format("[{0}] ", i) + string.Format("{0}/{9}| {1} {2} | {3} {4} | {5} {6} | {7} {8}",
+							string name = string.Format("[{0}] ",i) + string.Format("Available Slots: {0} | {1} {2} | {3} {4} | {5} {6} | {7} {8}",
 							visibleClass.GetAvailableSlots(),
 							visibleClass.GetClassName(),
 							visibleClass.GetClassID(),
@@ -71,9 +71,8 @@
 							visibleClass.GetCredits(),
 							visibleClass.GetCourseBuilding(),
 							visibleClass.GetRoomNumber(),
-							visibleClass.GetProfessor().GetName(),
-							visibleClass.GetTotalEnrollCount());
-
+							visibleClass.GetProfessor().GetName());
+						
 							<option value="@name">@name</option>
 						}
 					}
@@ -89,8 +88,6 @@
 			<button class="buttons">Remove Class</button>
 			<br />
 			<button class="buttons">Edit Class</button>
-			<br />
-			<button class="buttons" @onclick="ResetSchedule">Reset Schedule</button>
 
 			<ClassScheduler>
 			</ClassScheduler>
@@ -125,6 +122,8 @@
 	}
 	[Parameter]
 	public EventCallback<string> BindingValueChanged { get; set; }
+
+
 
 	#region Select and Fill Methods
 	/// <summary>
@@ -165,18 +164,18 @@
 	}
 	#endregion
 
-	public void AddClassToSchedule()
+	public void AddClassToSchedule() ///Need to get class that the user has selected from the list
 	{
 		if (classList.TryGetValue(_selectedID, out Class? value))
 		{
 			classScheduler.ProcessClass(value);
 		}
 	}
-	public void ResetSchedule()
+	public void RemoveClassFromSchedule() ///Need to get from a list of classes that the user already has
 	{
-		classScheduler.ResetCalendar();
+		
 	}
-	
+
 	protected override async Task OnInitializedAsync()
 	{
 		await Task.Run(() => classDataHandler.GetBookletData());
