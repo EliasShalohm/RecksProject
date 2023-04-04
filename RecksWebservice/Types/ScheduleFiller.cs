@@ -86,32 +86,7 @@ namespace RecksWebservice.Types
 				new OrganizedCalendar() { Time = "6:00 PM" }
 			};
 		}
-
-		public Class ProcessClassTimes(Class @class)
-		{
-			Time[] startTimes = @class.GetStartTimes().ToArray();
-			Time[] endTimes = @class.GetEndTimes().ToArray();
-			for (int i = 0; i < startTimes.Length; i++)
-			{
-				var day = startTimes[i].day;
-				string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[i].hour, startTimes[i].minutes, startTimes[i].meridium);
-				string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
-
-				foreach (var tes in @class.GetDays())
-				{
-					int startIndex = Calendar.IndexOf(Calendar.Find(x => x.Time == combinedStartTime));
-					int endIndex = Calendar.IndexOf(Calendar.Find(x => x.Time == combinedEndTime));
-					var calendarSlots = Calendar.Skip(startIndex).Take(endIndex - startIndex + 1);
-					foreach (var slot in calendarSlots)
-					{
-						slot.GetType().GetProperty(tes.ToString()).SetValue(slot, @class.GetCourseTitle());
-
-					}
-				}
-			}
-			return @class;
-		}
-
+		
 		public List<Class> CompareClasses()
 		{
 			List<Class> conflictingClasses = new List<Class>();

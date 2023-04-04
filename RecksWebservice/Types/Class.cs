@@ -166,28 +166,17 @@ namespace RecksWebservice.Types
 				string meridium = "AM";
 				if (_isNightClass)
 				{
-					if (hour.Equals("12"))
-					{
-						meridium = "AM";
-					}
-					else
-					{
-						meridium = "PM";
-					}
+					meridium = "PM";
 				}
 				else
 				{
-					if (hour.Equals("12"))
+					if (int.Parse(hour) <= 6 || int.Parse(hour) == 12)
 					{
-
 						meridium = "PM";
-					}
-					else
-					{
-						meridium = "AM";
 					}
 				}
 
+				Console.WriteLine("The class hour: " + hour + " minutes: " + minutes + " meridium: " + meridium);
 				days.Add(new Time(
 					(int)day,
 					int.Parse(hour),
