@@ -62,25 +62,80 @@
 	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
 	public string cellValue { get; set; }
-
-	public bool ProcessClass(Class @class)
+	
+	public void ProcessClass(Class entry)
 	{
-		selectedClasses ??= new List<Class>();
 		///Check to see if the given class conflicts with any in selectedClasses list
-		if (CompareClasses(@class))
+		if (CompareClasses(entry))
 		{
-			selectedClasses.Add(scheduleFiller.ProcessClassTimes(@class));
+			selectedClasses.Add(entry);
+			ProcessClassTimes(entry);
 		}
 		else
 		{
 			///Spit out error message for the user.
-			Console.WriteLine($"Error: The class {@class.GetClassName} conflicts with the following selected classes:");
-			foreach (var selectedClass in selectedClasses)
+		}
+		myGrid.Refresh();
+	}
+
+
+	public void ResetCalendar()
+	{
+		selectedClasses.Clear();
+		scheduleFiller.ResetCalendar();
+		List<Day> days = new List<Day> { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday, Day.Saturday, Day.Sunday };
+		foreach (var day in days)
+		{
+			int startIndex = 0;
+			int endIndex = scheduleFiller.GetCalendar().Count;
+
+			///Compare Class time and round; maybe insert new time if invalid?
+
+			var calendarSlots = scheduleFiller.GetCalendar().Skip(startIndex).Take(endIndex - startIndex + 1);
+
+			for (int i = 0; i < endIndex; i++)
 			{
-				Console.WriteLine($"- {selectedClass.GetClassName}");
+				myGrid.UpdateCellAsync(i, day.ToString(), "");
+				myGrid.EndEditAsync();
 			}
 		}
-		return false; // class was not successfully processed and added to the list
+	}
+
+	public void ProcessClassTimes(Class entry)
+	{
+		////Test Data for easy-access.
+		//entry = new Class();
+		//entry.SetDays(new List<Day> { Day.Monday, Day.Tuesday });
+		//entry.SetStartHours("300");
+		//entry.SetEndHours("600");
+		//entry.SetClassName("TestCourse");
+		//entry.SetClassNumber("1001");
+
+		var calendar = scheduleFiller.GetCalendar();
+		Time[] startTimes = entry.GetStartTimes().ToArray();
+		Time[] endTimes = entry.GetEndTimes().ToArray();
+		for (int i = 0; i < startTimes.Length; i++)
+		{
+			var dayNumber = startTimes[i].day;
+			string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[i].hour, startTimes[i].minutes, startTimes[i].meridium);
+			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
+
+			foreach (var day in entry.GetDays())
+			{
+				int startIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedStartTime));
+				int endIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime));
+
+				///Compare Class time and round; maybe insert new time if invalid?
+				
+				for (int j = startIndex; j < endIndex + 1; j++)
+				{
+					myGrid.UpdateCellAsync(j, day.ToString(), (entry.GetClassName() + entry.GetClassID()));
+				}
+
+			}
+		}
+		myGrid.EndEditAsync();
+		return;
 	}
 
 	private void BatchSaveMethod()
@@ -121,7 +176,7 @@
 		selectedClasses = new List<Class>();
 	}
 
-	public bool CompareClasses(Class @class)
+	public bool CompareClasses(Class value)
 	{
 		List<Class> conflictingClasses = new List<Class>(); //report these to error handler for a file-writeup
 															//True = Good / All Classes Are Set
