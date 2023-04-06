@@ -7,7 +7,7 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
-    <None Remove="Pages\Popup Components\" />
+    <None Remove="Pages\Services\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -19,6 +19,6 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\Popup Components\" />
+    <Folder Include="Pages\Services\" />
   </ItemGroup>
 </Project>
