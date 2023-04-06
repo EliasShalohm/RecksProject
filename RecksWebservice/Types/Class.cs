@@ -172,14 +172,10 @@ namespace RecksWebservice.Types
 				}
 				else
 				{
-					if (int.Parse(hour) <= 6)
+					if (int.Parse(hour) <= 6 || int.Parse(hour) == 12)
 					{
 
 						meridium = "PM";
-					}
-					else
-					{
-						meridium = "AM";
 					}
 				}
 
