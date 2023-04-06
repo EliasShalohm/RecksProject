@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Syncfusion.Blazor.RichTextEditor.Internal;
+using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
