@@ -46,34 +46,41 @@
 		provide execellent use.
 	*@
 
-	<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
+	@*<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
 	<button class="btn btn-primary" @onclick="SetCellValue">BySetCellValue</button>
 	<button class="btn btn-primary" @onclick="DataSourceSetValue">ByDataSource</button>
 	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
 	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
-	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>
+	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>*@
 </div>
 
 <br/>
 
 @code {
-	private List<Class> selectedClasses { get; set; } = new();
-	private static ScheduleFiller scheduleFiller { get; set; } = new();
+	private List<Class>? selectedClasses { get; set; } = new();
+	private static ScheduleFiller scheduleFiller { get; set;} = new();
 	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
 	public string cellValue { get; set; }
 
-	public void ProcessClass(Class @class)
+	public bool ProcessClass(Class @class)
 	{
+		selectedClasses ??= new List<Class>();
 		///Check to see if the given class conflicts with any in selectedClasses list
-		if (CompareClasses(@class)) {
-			selectedClasses.Add(@class);
-			scheduleFiller.ProcessClassTimes(@class);
-		} else
+		if (CompareClasses(@class))
+		{
+			selectedClasses.Add(scheduleFiller.ProcessClassTimes(@class));
+		}
+		else
 		{
 			///Spit out error message for the user.
+			Console.WriteLine($"Error: The class {@class.GetClassName} conflicts with the following selected classes:");
+			foreach (var selectedClass in selectedClasses)
+			{
+				Console.WriteLine($"- {selectedClass.GetClassName}");
+			}
 		}
-		myGrid.Refresh();
+		return false; // class was not successfully processed and added to the list
 	}
 
 	private void BatchSaveMethod()
@@ -111,6 +118,7 @@
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		selectedClasses = new List<Class>();
 	}
 
 	public bool CompareClasses(Class @class)

@@ -1,0 +1,35 @@
+﻿@using RecksWebservice.Types
+@using RecksWebservice.Pages
+@using RecksWebservice.Data
+@using System.Diagnostics
+@using System.Reflection
+@using System.Runtime.ExceptionServices
+@using System.Runtime.InteropServices
+@using HtmlAgilityPack;
+@using System.Collections.Generic
+@using System.Net.Http;
+@using System.Threading.Tasks;
+@inject RMPDataHandler RMPData
+
+
+@page "/rmp-data-page"
+
+<h3>RMP Data Page</h3>
+
+<div>
+    <p>Professor Name: @professorName</p>
+    <p>Class Name: @className</p>
+</div>
+
+@code {
+    private RMPDataHandler rmpDataHandler = new RMPDataHandler();
+    private string professorName;
+    private string className;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await rmpDataHandler.GetProfessorData("AYMOND P", "CSC3380");
+        professorName = "Aymond P";
+        className = "CSC3380";
+    }
+}
