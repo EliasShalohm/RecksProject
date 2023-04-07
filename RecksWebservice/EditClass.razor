@@ -1,0 +1,44 @@
+﻿<style>
+    .popup .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -150%) scale(0);
+        width: 350px;
+        height: 430px;
+        z-index: 2;
+        text-align: center;
+        padding: 10px;
+        border-radius: 5px;
+        background: #dfdfdf;
+        z-index: 1;
+    }
+</style>
+@if (IsVisible) { 
+<div class="popup" id="popup-1">
+    <div class="content">
+        <div class="close-btn" @onclick="Close">x
+        </div>
+        <h1>Edit Class</h1>
+    </div>
+</div>
+}
+
+@code{
+
+    private bool IsVisible = false;
+
+    public void Show()
+    {
+        IsVisible = true; 
+    }
+
+    private void Close()
+    {
+        IsVisible = false;
+    }
+
+
+
+}
+

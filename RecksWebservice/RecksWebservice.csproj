@@ -7,9 +7,6 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
-    <None Remove="Pages\Services\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
@@ -17,8 +14,5 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.54" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\Services\" />
   </ItemGroup>
 </Project>

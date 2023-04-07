@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using RecksWebservice.Data;
 using RecksWebservice.Pages;
-using RecksWebservice.Pages.Services;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,6 @@ builder.Services.AddSingleton<ClassDataHandler>();
 builder.Services.AddSingleton<ClassScheduler>();
 builder.Services.AddSingleton<RMPDataHandler>();
 builder.Services.AddSingleton<ErrorHandler>();
-builder.Services.AddScoped<Service, IService>();
 builder.Services.AddSyncfusionBlazor();
 
 var app = builder.Build();
