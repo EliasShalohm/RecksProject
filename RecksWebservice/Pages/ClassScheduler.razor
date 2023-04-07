@@ -62,7 +62,7 @@
 	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
 	public string cellValue { get; set; }
-	
+
 	public void ProcessClass(Class entry)
 	{
 		///Check to see if the given class conflicts with any in selectedClasses list
@@ -118,7 +118,13 @@
 		{
 			var dayNumber = startTimes[i].day;
 			string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[i].hour, startTimes[i].minutes, startTimes[i].meridium);
-			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
+			//string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
+			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, "" + (int.Parse(endTimes[i].minutes) - 20), endTimes[i].meridium);
+			if (endTimes[i].minutes == "20")
+			{
+				combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, "00", endTimes[i].meridium);
+			}
+			Console.WriteLine("StartTime: " + combinedStartTime + " EndTime: " + combinedEndTime);
 
 			foreach (var day in entry.GetDays())
 			{

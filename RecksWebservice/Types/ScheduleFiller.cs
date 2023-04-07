@@ -87,7 +87,7 @@ namespace RecksWebservice.Types
 			};
 		}
 
-		public List<Class> CompareClasses()
+			public List<Class> CompareClasses()
 		{
 			List<Class> conflictingClasses = new List<Class>();
 			//for (int i = 0; i < classes.Count - 1; i++)
