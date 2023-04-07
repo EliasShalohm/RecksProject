@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Syncfusion.Blazor.RichTextEditor.Internal;
+using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
@@ -166,25 +167,15 @@ namespace RecksWebservice.Types
 				string meridium = "AM";
 				if (_isNightClass)
 				{
-					if (hour.Equals("12"))
-					{
-						meridium = "AM";
-					}
-					else
-					{
-						meridium = "PM";
-					}
+					meridium = "PM";
+					
 				}
 				else
 				{
-					if (hour.Equals("12"))
+					if (int.Parse(hour) <= 6 || int.Parse(hour) == 12)
 					{
 
 						meridium = "PM";
-					}
-					else
-					{
-						meridium = "AM";
 					}
 				}
 
