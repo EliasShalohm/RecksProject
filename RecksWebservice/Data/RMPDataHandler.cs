@@ -5,6 +5,11 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using HtmlAgilityPack;
 using System.Net.Http;
+using Syncfusion.Blazor.Diagram;
+using Syncfusion.Blazor.PivotView;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Syncfusion.Blazor.Data;
 
 
 namespace RecksWebservice.Data
@@ -46,3 +51,5 @@ namespace RecksWebservice.Data
 
     }
 }
+
+
