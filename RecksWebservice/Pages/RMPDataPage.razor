@@ -9,7 +9,9 @@
 @using System.Collections.Generic
 @using System.Net.Http;
 @using System.Threading.Tasks;
+@using Microsoft.AspNetCore.WebUtilities;
 @inject RMPDataHandler RMPData
+@inject ClassDataHandler classDataHandler  
 
 
 @page "/rmp-data-page"
@@ -17,19 +19,52 @@
 <h3>RMP Data Page</h3>
 
 <div>
+    <label for="subjectSelect">Select a subject:</label>
+    <select id="subjectSelect" @bind="selectedSubject">
+        @foreach (var department in classDataHandler.GetDepartments())
+        {
+            <option value="@department">@department</option>
+        }
+    </select>
+
+    <label for="professorSelect">Select a professor:</label>
+    <select id="professorSelect" @bind="selectedProfessor">
+        @foreach (var professor in professors)
+        {
+            <option value="@professor">@professor</option>
+        }
+    </select>
+
+    <button @onclick="GetProfessorData">Get Professor Data</button>
+
     <p>Professor Name: @professorName</p>
     <p>Class Name: @className</p>
+    <p>Rating: @rating</p>
+    <p>Number of Ratings: @numRatings</p>
 </div>
 
 @code {
     private RMPDataHandler rmpDataHandler = new RMPDataHandler();
+    private List<string> subjects = new List<string>();
+    private List<string> professors = new List<string> { "Professor 1", "Professor 2", "Professor 3" };
+    private string selectedSubject;
+    private string selectedProfessor;
     private string professorName;
     private string className;
+    private string rating;
+    private string numRatings;
+
+    private async Task GetProfessorData()
+    {
+        await rmpDataHandler.GetProfessorData(selectedProfessor, className);
+        professorName = selectedProfessor;
+        //rating = rmpDataHandler.GetProfessorRating();
+        //numRatings = rmpDataHandler.GetNumRatings();
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        await rmpDataHandler.GetProfessorData("AYMOND P", "CSC3380");
-        professorName = "Aymond P";
-        className = "CSC3380";
+        await Task.Run(() => classDataHandler.GetBookletData());
+        subjects = classDataHandler.GetDepartments(); // populate subjects list with the department list from the LSU booklet
     }
-}
+  }
