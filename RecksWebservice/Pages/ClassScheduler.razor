@@ -42,16 +42,6 @@
 	</SfGrid>
 	<br/>
 
-	@*These buttons are commented out so that during demonstration, they aren't around. However, their functions still
-		provide execellent use.
-	*@
-
-	@*<button class="btn btn-primary" @onclick="UpdateCell">ByUpdateCell</button>
-	<button class="btn btn-primary" @onclick="SetCellValue">BySetCellValue</button>
-	<button class="btn btn-primary" @onclick="DataSourceSetValue">ByDataSource</button>
-	<button class="btn btn-primary" @onclick="CurrentViewDataSetValue">ByCurrentViewData</button>
-	<button class="btn btn-primary" @onclick="GetValueCell">GetValueCell</button>
-	<button class="btn btn-primary" @onclick="BatchSaveMethod">Batch Save</button>*@
 </div>
 
 <br/>
@@ -114,49 +104,56 @@
 		var calendar = scheduleFiller.GetCalendar();
 		Time[] startTimes = entry.GetStartTimes().ToArray();
 		Time[] endTimes = entry.GetEndTimes().ToArray();
+
+		string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[0].hour, startTimes[0].minutes, startTimes[0].meridium);
+		string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[0].hour, endTimes[0].minutes, endTimes[0].meridium);
+		if (calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime)) == -1)
+		{
+			string endTime_RoundedDown = "";
+			string endTime_RoundedUp = "";
+			if (endTimes[0].minutes.Equals("20"))
+			{
+				endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "00", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium);
+
+				var indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown));
+				calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
+			}
+			else if (endTimes[0].minutes.Equals("50"))
+			{
+				endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour + 1, "00", endTimes[0].meridium);
+
+				var indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
+				calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
+			}
+
+			ScheduleDataGridData = calendar;
+			myGrid.Refresh();
+
+		} else
+		{
+			Console.WriteLine("Time " + combinedEndTime + " is all good.");
+		}
+		myGrid.Refresh();
+
 		for (int i = 0; i < startTimes.Length; i++)
 		{
 			var dayNumber = startTimes[i].day;
-			string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[i].hour, startTimes[i].minutes, startTimes[i].meridium);
-			//string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, endTimes[i].minutes, endTimes[i].meridium);
-			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, "" + (int.Parse(endTimes[i].minutes) - 20), endTimes[i].meridium);
-			if (endTimes[i].minutes == "20")
-			{
-				combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, "00", endTimes[i].meridium);
-			}
+			//string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[i].hour, "" + (int.Parse(endTimes[i].minutes) - 20), endTimes[i].meridium);
+			
 			Console.WriteLine("StartTime: " + combinedStartTime + " EndTime: " + combinedEndTime);
 
 			foreach (var day in entry.GetDays())
 			{
 				int startIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedStartTime));
 				int endIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime));
-
-				///Compare Class time and round; maybe insert new time if invalid?
-				
 				for (int j = startIndex; j < endIndex + 1; j++)
 				{
 					myGrid.UpdateCellAsync(j, day.ToString(), (entry.GetClassName() + entry.GetClassID()));
 				}
-
 			}
 		}
 		myGrid.EndEditAsync();
 		return;
-	}
-
-	private void BatchSaveMethod()
-	{
-		myGrid.EndEditAsync();
-	}
-	private void UpdateCell()
-	{
-		myGrid.UpdateCellAsync(0, "MondayTime", "UpdateCell!");
-	}
-
-	private void SetCellValue() ///Doesn't do anything
-	{
-		myGrid.SetCellValueAsync("8:00 AM", "Monday", "SetCellValue!");
-		myGrid.Refresh();
 	}
 
 	private void DataSourceSetValue()
@@ -189,7 +186,7 @@
 															// False = Bad / A Class Conflicts
 		if (selectedClasses != null) 
 		{
-			foreach (var key in selectedClasses) ///<---- POINT OF CRASH (selectedClasses is null)
+			foreach (var key in selectedClasses)
 			{
 				//comparisons here; if comparisons 
 			}

@@ -19,22 +19,6 @@
 <h3>RMP Data Page</h3>
 
 <div>
-    <label for="subjectSelect">Select a subject:</label>
-    <select id="subjectSelect" @bind="selectedSubject">
-        @foreach (var department in classDataHandler.GetDepartments())
-        {
-            <option value="@department">@department</option>
-        }
-    </select>
-
-    <label for="professorSelect">Select a professor:</label>
-    <select id="professorSelect" @bind="selectedProfessor">
-        @foreach (var professor in professors)
-        {
-            <option value="@professor">@professor</option>
-        }
-    </select>
-
     <button @onclick="GetProfessorData">Get Professor Data</button>
 
     <p>Professor Name: @professorName</p>
@@ -45,26 +29,23 @@
 
 @code {
     private RMPDataHandler rmpDataHandler = new RMPDataHandler();
-    private List<string> subjects = new List<string>();
-    private List<string> professors = new List<string> { "Professor 1", "Professor 2", "Professor 3" };
     private string selectedSubject;
     private string selectedProfessor;
     private string professorName;
     private string className;
-    private string rating;
+    private int rating;
     private string numRatings;
 
     private async Task GetProfessorData()
     {
         await rmpDataHandler.GetProfessorData(selectedProfessor, className);
         professorName = selectedProfessor;
-        //rating = rmpDataHandler.GetProfessorRating();
+        rating = rmpDataHandler.GetProfessorRating();
         //numRatings = rmpDataHandler.GetNumRatings();
     }
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Run(() => classDataHandler.GetBookletData());
-        subjects = classDataHandler.GetDepartments(); // populate subjects list with the department list from the LSU booklet
     }
   }

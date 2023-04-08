@@ -4,10 +4,8 @@
 @using RecksWebservice.Data;
 @using RecksWebservice.Types;
 @using RecksWebservice.Pages;
-@using RecksWebservice.Pages.Services;
 @inject ClassDataHandler classDataHandler
 @inject ClassScheduler classScheduler
-@inject RecksWebservice.Pages.Services.Service Modal
 @page "/booklet"
 <link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
 
@@ -16,9 +14,6 @@
 </style>
 
 <body>
-
-	
-	
 	<div class="container-fluid">
 		<div class="row">
 			<div id="header-text" class="col-md-12">
@@ -90,7 +85,7 @@
 			<br />
 			<button class="buttons">Remove Class</button>
 			<br />
-			<button @onclick="ShowEditClass" class="buttons">Edit Class</button>
+			<button class="buttons">Edit Class</button>
             <br />
             <button @onclick="ResetCalendar" class="buttons">Edit Class</button>
 
@@ -194,28 +189,6 @@
         departmentList = classDataHandler.GetDepartments();
     }
 
-    void ShowEditClass()
-    {
-        var parameters = new ModalParameter();
-        parameters.Add("FormId", 3);
-
-        Modal.OnClose += ModalClosed;
-        Modal.Show<EditForm>("Edit Form", parameters);
-    }
-
-    void ModalClosed(ModalResult modalResult)
-    {
-        Console.WriteLine("Modal Closed");
-        if (modalResult.Cancelled)
-        {
-            Console.WriteLine("Modal Cancelled");
-        }
-        else {
-            Console.WriteLine(modalResult.Data.ToString());
-        }
-
-        Modal.OnClose -= ModalClosed;
-    }
-
+    
     //After code block execution, semester & department lists should automatically fill themselves out accordingly.
 } 
