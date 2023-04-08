@@ -11,16 +11,14 @@
 @using System.Threading.Tasks;
 @using Microsoft.AspNetCore.WebUtilities;
 @inject RMPDataHandler RMPData
-@inject ClassDataHandler classDataHandler  
-
-
+@inject ClassDataHandler classDataHandler
 @page "/rmp-data-page"
+<link href="/css/RMP.css" rel="stylesheet" /> <!--Referencing stylesheet for RMP page-->
 
-<h3>RMP Data Page</h3>
+<h3>RateMyProfessor Data</h3>
 
-<div>
+<div class="data">
     <button @onclick="GetProfessorData">Get Professor Data</button>
-
     <p>Professor Name: @professorName</p>
     <p>Class Name: @className</p>
     <p>Rating: @rating</p>
@@ -48,4 +46,4 @@
     {
         await Task.Run(() => classDataHandler.GetBookletData());
     }
-  }
+}

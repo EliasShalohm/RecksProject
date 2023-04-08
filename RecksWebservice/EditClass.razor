@@ -14,14 +14,16 @@
         z-index: 1;
     }
 </style>
-@if (IsVisible) { 
-<div class="popup" id="popup-1">
-    <div class="content">
-        <div class="close-btn" @onclick="Close">x
+@if (IsVisible)
+{
+    <div class="popup" id="popup-1">
+        <div class="content">
+            <div class="close-btn" @onclick="Close">
+                x
+            </div>
+            <h1>Edit Class</h1>
         </div>
-        <h1>Edit Class</h1>
     </div>
-</div>
 }
 
 @code{
@@ -30,15 +32,12 @@
 
     public void Show()
     {
-        IsVisible = true; 
+        IsVisible = true;
     }
 
     private void Close()
     {
         IsVisible = false;
     }
-
-
-
 }
 

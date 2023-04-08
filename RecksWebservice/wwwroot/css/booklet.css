@@ -8,30 +8,32 @@ h1 {
     font-size: 1.5em;
     color: purple;
     text-align: center;
-    font-family: Cambria;
+    font-family: Impact;
     font-weight: bold;
     color: #461D7C;
 }
 
 h3 {
-    font-family: Cambria;
+    font-family: Impact;
     font-weight: bold;
     text-align: center;
     color: #461D7C;
 }
 
+
+
 .buttons {
     background-color: #461D7C;
     color: white;
     border: none;
-    font-family: Cambria;
+    font-family: Impact;
     align-content: flex-end;
     align-self: flex-end;
     width: fit-content;
 }
 
 select {
-    font-family: Cambria;
+    font-family: Impact;
     background-color: #461D7C;
     color: white;
 }
