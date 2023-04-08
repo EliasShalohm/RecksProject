@@ -10,12 +10,24 @@
 @using System.Net.Http;
 @using System.Threading.Tasks;
 @using Microsoft.AspNetCore.WebUtilities;
-@inject RMPDataHandler RMPData
 @inject ClassDataHandler classDataHandler
+@using Microsoft.AspNetCore.Components;
+
+
+
 @page "/rmp-data-page"
+
 <link href="/css/RMP.css" rel="stylesheet" /> <!--Referencing stylesheet for RMP page-->
 
+@inject RMPDataHandler RMPHandler
+
 <h3>RateMyProfessor Data</h3>
+
+<div class="search">
+    <p>Search for a professor:</p>
+    <input type="text" @bind-value="@selectedProfessor" />
+    <button @onclick="GetProfessorData">Search</button>
+</div>
 
 <div class="data">
     <button @onclick="GetProfessorData">Get Professor Data</button>
@@ -23,20 +35,22 @@
     <p>Class Name: @className</p>
     <p>Rating: @rating</p>
     <p>Number of Ratings: @numRatings</p>
-</div>
+</div>`
 
 @code {
     private RMPDataHandler rmpDataHandler = new RMPDataHandler();
-    private string selectedSubject;
     private string selectedProfessor;
     private string professorName;
     private string className;
     private int rating;
     private string numRatings;
 
+
     private async Task GetProfessorData()
     {
-        await rmpDataHandler.GetProfessorData(selectedProfessor, className);
+        professorName = null;
+        rating = 0;
+        await rmpDataHandler.GetProfessorData(selectedProfessor);
         professorName = selectedProfessor;
         rating = rmpDataHandler.GetProfessorRating();
         //numRatings = rmpDataHandler.GetNumRatings();

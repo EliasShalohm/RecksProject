@@ -10,37 +10,28 @@ using Syncfusion.Blazor.PivotView;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Syncfusion.Blazor.Data;
+using Syncfusion.Blazor.Inputs;
 
 
 namespace RecksWebservice.Data
 {
+
     public class RMPDataHandler
     {
-        private Professor professor;
-        private static string Professor = "";
-        private List<string> Class = new();
+        private Professor professor = new Professor(); // Initialize professor object
+        private List<string> classes = new List<string>();
+        private int rating; // add private field for rating
 
         public int GetProfessorRating()
         {
-            return professor.GetRating();
+            return rating; // return the private field
         }
-
-        public async Task GetProfessorData(string professor, string @class)
+        public async Task GetProfessorData(string professorName)
         {
-            //Simulate entry from booklet
-            @class = "CSC3380";
-            professor = "AYMOND P";
-            string department = "Computer Science";
+            // Query RMP using professor last name
+            string url = $"https://www.ratemyprofessors.com/search/teachers?query={professorName}&sid=U2Nob29sLTMwNzE=";
 
-            //Split string into last name and first initial
-            string[] split = professor.Split(' ');
-            var lastName = split[0];
-            var firstInitial = split[1];
-
-            //Query RMP using professor last name and first initial
-            string url = "https://www.ratemyprofessors.com/search/teachers?query=" + lastName + "%20" + firstInitial + "&sid=U2Nob29sLTMwNzE=";
-
-            //Reads content from RMP as string
+            // Reads content from RMP as string
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
@@ -48,12 +39,37 @@ namespace RecksWebservice.Data
                 try
                 {
                     string mainPageHtml = await response.Content.ReadAsStringAsync();
+
+                    // Parse search results page and extract professor info for the first result
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(mainPageHtml);
+                    var searchResult = doc.DocumentNode.SelectSingleNode("//li[contains(@class, 'list-inline-item')]//a[contains(@class, 'TeacherCard__StyledTeacherCard')]");
+
+                    if (searchResult != null)
+                    {
+                        var name = searchResult.SelectSingleNode(".//div[contains(@class, 'CardName__Name')]")?.InnerText.Trim();
+                        var ratingText = searchResult.SelectSingleNode(".//div[contains(@class, 'CardRating__Rating')]")?.InnerText.Trim();
+                        var numRatings = searchResult.SelectSingleNode(".//div[contains(@class, 'CardRating__TotalRatings')]")?.InnerText.Trim();
+
+                        professor.SetName(name);
+                        if (ratingText.ToLower() == "n/a")
+                        {
+                            rating = -1; // professor has no rating
+                        }
+                        else
+                        {
+                            rating = int.Parse(ratingText.Split('.')[0]); // set the private field to the extracted rating
+                        }
+                    }
+                    else
+                    {
+                        rating = -1; // professor not found
+                    }
                 }
                 catch { }
             }
         }
-
     }
-}
+    }
 
 
