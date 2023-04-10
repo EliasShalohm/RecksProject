@@ -30,17 +30,21 @@ namespace RecksWebservice.Data
                     string mainPageHtml = await response.Content.ReadAsStringAsync();
 
                     // Parse search results page and extract professor info for the first result
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(mainPageHtml);
-                    var searchResult = doc.DocumentNode.SelectSingleNode("//li[contains(@class, 'list-inline-item')]//a[contains(@class, 'TeacherCard__StyledTeacherCard')]");
+                    //var doc = new HtmlDocument();
+                    //doc.LoadHtml(mainPageHtml);
+                    var web = new HtmlWeb();
+                    var doc = web.Load("https://www.ratemyprofessors.com/search/teachers?query=Aymond%20Patti&sid=U2Nob29sLTMwNzE=");
+
+                    var searchResult = doc.DocumentNode.SelectSingleNode("//div[@class='CardNumRating__CardNumRatingNumber-sc-17t4b9u-2 jvzqBM']");
 
                     if (searchResult != null)
                     {
-                        var name = searchResult.SelectSingleNode(".//div[contains(@class, 'CardName__Name')]")?.InnerText.Trim();
+                        //var name = searchResult.SelectSingleNode(".//div[contains(@class, 'CardName__Name')]")?.InnerText.Trim();
                         var ratingText = searchResult.SelectSingleNode(".//div[contains(@class, 'CardRating__Rating')]")?.InnerText.Trim();
-                        var numRatings = searchResult.SelectSingleNode(".//div[contains(@class, 'CardRating__TotalRatings')]")?.InnerText.Trim();
-
-                        professor.SetName(name);
+                        var numRatings = searchResult.InnerText;
+                        var cardNumRatingNumber = searchResult?.InnerText.Trim();
+                        rating = int.Parse(numRatings);
+                        //professor.SetName(name);
                         if (ratingText.ToLower() == "n/a")
                         {
                             rating = -1; // professor has no rating
