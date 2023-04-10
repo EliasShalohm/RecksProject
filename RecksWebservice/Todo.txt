@@ -1,6 +1,4 @@
-﻿* Add Buttons to Pick & Choose Classes (Buttons Call Function to Add class to given list)
-* Display "Classes added" list
-* Account comments as larger categories for the classes below them
+﻿* Display "Classes added" list
 
 [] Fix bug when re-selecting department, the classes list is emptied
 [] Fix re-added semester & department data every refresh. Find a way to get the control ID and force a clear.
@@ -13,22 +11,5 @@
 * Add a help button / page for user documentation
 * Link to original LSU for user convienence
 * Class reporter will need to eventually write to a file; not just spit message in console
-
-9 = Days {MTW TH F)
-	* M = Monday
-	* T = Tuesday
-	* W = Wednesday
-	* TH = Thursday
-	* F = Friday
-	{!} SA = Saturday (Not Currently Supported)
-	{!} SU = Sunday (Not Currently Supported)
-10 = Room
-	* Always an string, due to the 0 in many of them and often letters included.
-11 = Special Enrollment
-	* OFTEN EMPTY, REGARDLESS OF LAB OR OTHERWISE
-12 = Instructor
-	* CAN BE EMPTY, REGARDLESS OF LAB OR OTHERWISE
-	* Will be difficult to differentiate between professor and special enrollment requirements.
-	* Alwayus consists of a longer string at the first half, and a single letter in the latter half.
 
 -===================-
