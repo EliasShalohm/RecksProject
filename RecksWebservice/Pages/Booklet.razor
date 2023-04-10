@@ -4,6 +4,7 @@
 @using RecksWebservice.Data;
 @using RecksWebservice.Types;
 @using RecksWebservice.Pages;
+@using System.Text.RegularExpressions;
 @inject ClassDataHandler classDataHandler
 @inject ClassScheduler classScheduler
 @page "/booklet"
@@ -116,7 +117,9 @@
         {
             if (_selectedClass == value) return;
             _selectedClass = value;
-            _selectedID = int.Parse(_selectedClass[1].ToString());
+            string? index = _selectedClass.Substring(_selectedClass.IndexOf('[') + 1, _selectedClass.IndexOf(']') - 1);
+            _selectedID = int.Parse(index);
+
             BindingValueChanged.InvokeAsync(value);
         }
     }
