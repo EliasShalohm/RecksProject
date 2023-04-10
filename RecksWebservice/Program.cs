@@ -12,7 +12,6 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ClassDataHandler>();
 builder.Services.AddSingleton<ClassScheduler>();
 builder.Services.AddSingleton<RMPDataHandler>();
-builder.Services.AddSingleton<ErrorHandler>();
 builder.Services.AddSyncfusionBlazor();
 
 var app = builder.Build();
