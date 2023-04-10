@@ -57,224 +57,227 @@
 <br/>
 
 @code {
-	string selectedClass = "";
-	string SelectedClassID
-	{
-		get => selectedClass;
-		set { selectedClass = value; }
-	}
+    string selectedClass = "";
+    string SelectedClassID
+    {
+        get => selectedClass;
+        set { selectedClass = value; }
+    }
 
-	private List<Class> selectedClasses { get; set; } = new();
-	private static ScheduleFiller scheduleFiller { get; set;} = new();
-	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
-	public SfGrid<OrganizedCalendar> myGrid { get; set; }
-	public string cellValue { get; set; }
+    private List<Class> selectedClasses { get; set; } = new();
+    private static ScheduleFiller scheduleFiller { get; set;} = new();
+    public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
+    public SfGrid<OrganizedCalendar> myGrid { get; set; }
+    public string cellValue { get; set; }
 
-	public void ProcessClass(Class entry)
-	{
-		///Check to see if the given class conflicts with any in selectedClasses list
-		if (CompareClasses(entry))
-		{
-			selectedClasses.Add(entry);
-			ProcessClassTimes(entry);
-		}
-		else
-		{
-			///Spit out error message for the user.
-		}
-		myGrid.Refresh();
-	}
+    public void ProcessClass(Class entry)
+    {
+        ///Check to see if the given class conflicts with any in selectedClasses list
+        if (CompareClasses(entry))
+        {
+            selectedClasses.Add(entry);
+            ProcessClassTimes(entry);
+        }
+        else
+        {
+            Console.WriteLine("Class cannot be added due to conflicting times");
+        }
+        myGrid.Refresh();
+    }
 
-	public void RemoveSelectedClass()
-	{
-		var splitInfo = selectedClass.Split(" ");
-		if (splitInfo.Length > 2) {
-			var section = int.Parse(splitInfo[2].Replace("Section:", ""));
-			var d = selectedClasses.Find(x => x.GetClassName().Equals(splitInfo[0]) && x.GetClassID().Equals(splitInfo[1]) && x.GetSection() == section);
-			selectedClasses.Remove(d);
-			//Cars.Where(x => x.Property1 == "Value" && x.Property2 == "Value2");
+    public void RemoveSelectedClass()
+    {
+        var splitInfo = selectedClass.Split(" ");
+        if (splitInfo.Length > 2) {
+            var section = int.Parse(splitInfo[2].Replace("Section:", ""));
+            var d = selectedClasses.Find(x => x.GetClassName().Equals(splitInfo[0]) && x.GetClassID().Equals(splitInfo[1]) && x.GetSection() == section);
+            selectedClasses.Remove(d);
+            //Cars.Where(x => x.Property1 == "Value" && x.Property2 == "Value2");
 
-			SelectedClassID = "Selected Class";
-			UpdateDataGrid();
-		}
-	}
+            SelectedClassID = "Selected Class";
+            UpdateDataGrid();
+        }
+    }
 
-	public void ResetCalendar()
-	{
-		selectedClasses.Clear();
-		scheduleFiller.ResetCalendar();
-		WipeCalendar();
-	}
+    public void ResetCalendar()
+    {
+        selectedClasses.Clear();
+        scheduleFiller.ResetCalendar();
+        WipeCalendar();
+    }
 
-	private void WipeCalendar()
-	{
-		List<Day> days = new List<Day> { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday, Day.Saturday, Day.Sunday };
-		foreach (var day in days)
-		{
-			int startIndex = 0;
-			int endIndex = scheduleFiller.GetCalendar().Count;
+    private void WipeCalendar()
+    {
+        List<Day> days = new List<Day> { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday, Day.Saturday, Day.Sunday };
+        foreach (var day in days)
+        {
+            int startIndex = 0;
+            int endIndex = scheduleFiller.GetCalendar().Count;
 
-			///Compare Class time and round; maybe insert new time if invalid?
+            ///Compare Class time and round; maybe insert new time if invalid?
 
-			var calendarSlots = scheduleFiller.GetCalendar().Skip(startIndex).Take(endIndex - startIndex + 1);
+            var calendarSlots = scheduleFiller.GetCalendar().Skip(startIndex).Take(endIndex - startIndex + 1);
 
-			for (int i = 0; i < endIndex; i++)
-			{
-				myGrid.UpdateCellAsync(i, day.ToString(), "");
-				myGrid.EndEditAsync();
-			}
-		}
-	}
+            for (int i = 0; i < endIndex; i++)
+            {
+                myGrid.UpdateCellAsync(i, day.ToString(), "");
+                myGrid.EndEditAsync();
+            }
+        }
+    }
 
-	private Class TestPremadeClass() {
-		var entry = new Class();
-		entry.SetDays(new List<Day> { Day.Monday, Day.Wednesday, Day.Friday });
-		entry.SetStartHours("130");
-		entry.SetEndHours("220");
-		entry.SetClassName("TestCourse");
-		entry.SetClassNumber("1001");
-		return entry;
-	}
+    private Class TestPremadeClass() {
+        var entry = new Class();
+        entry.SetDays(new List<Day> { Day.Monday, Day.Wednesday, Day.Friday });
+        entry.SetStartHours("130");
+        entry.SetEndHours("220");
+        entry.SetClassName("TestCourse");
+        entry.SetClassNumber("1001");
+        return entry;
+    }
 
-	private void UpdateDataGrid()
-	{
-		List<OrganizedCalendar?> calendar = scheduleFiller.GetCalendar();
-		WipeCalendar();
+    private void UpdateDataGrid()
+    {
+        List<OrganizedCalendar?> calendar = scheduleFiller.GetCalendar();
+        WipeCalendar();
 
-		foreach (var entry in selectedClasses) {
-			Time[] startTimes = entry.GetStartTimes().ToArray();
-			Time[] endTimes = entry.GetEndTimes().ToArray();
+        foreach (var entry in selectedClasses) {
+            Time[] startTimes = entry.GetStartTimes().ToArray();
+            Time[] endTimes = entry.GetEndTimes().ToArray();
 
-			string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[0].hour, startTimes[0].minutes, startTimes[0].meridium);
-			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[0].hour, endTimes[0].minutes, endTimes[0].meridium);
+            string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[0].hour, startTimes[0].minutes, startTimes[0].meridium);
+            string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[0].hour, endTimes[0].minutes, endTimes[0].meridium);
 
-			myGrid.StartEditAsync();
-			for (int i = 0; i < startTimes.Length; i++)
-			{
-				int dayNumber = startTimes[i].day;
-				Console.WriteLine("StartTime: " + combinedStartTime + " EndTime: " + combinedEndTime);
-				foreach (Day day in entry.GetDays())
-				{
+            myGrid.StartEditAsync();
+            for (int i = 0; i < startTimes.Length; i++)
+            {
+                int dayNumber = startTimes[i].day;
+                Console.WriteLine("StartTime: " + combinedStartTime + " EndTime: " + combinedEndTime);
+                foreach (Day day in entry.GetDays())
+                {
 
-					int startIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedStartTime);
-					int endIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedEndTime);
+                    int startIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedStartTime);
+                    int endIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedEndTime);
 
-					for (int j = startIndex; j <= endIndex; j++)
-					{
-						string? value = string.Format("{0}{1} Section {2}", entry.GetClassName(), entry.GetClassID(), entry.GetSection());
+                    for (int j = startIndex; j <= endIndex; j++)
+                    {
+                        string? value = string.Format("{0}{1} Section {2}", entry.GetClassName(), entry.GetClassID(), entry.GetSection());
 
-						PropertyInfo info = ScheduleDataGridData[j].GetType().GetProperty(day.ToString());
-						info.SetValue(ScheduleDataGridData[j], value);
-					}
-				}
-			}
-		}
+                        PropertyInfo info = ScheduleDataGridData[j].GetType().GetProperty(day.ToString());
+                        info.SetValue(ScheduleDataGridData[j], value);
+                    }
+                }
+            }
+        }
 
-	}
+    }
 
-	public void ProcessClassTimes(Class entry)
-	{
-		//entry = TestPremadeClass();
+    public void ProcessClassTimes(Class entry)
+    {
+        //entry = TestPremadeClass();
 
-		List<OrganizedCalendar?> calendar = scheduleFiller.GetCalendar();
-		Time[] startTimes = entry.GetStartTimes().ToArray();
-		Time[] endTimes = entry.GetEndTimes().ToArray();
+        List<OrganizedCalendar?> calendar = scheduleFiller.GetCalendar();
+        Time[] startTimes = entry.GetStartTimes().ToArray();
+        Time[] endTimes = entry.GetEndTimes().ToArray();
 
-		string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[0].hour, startTimes[0].minutes, startTimes[0].meridium);
-		string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[0].hour, endTimes[0].minutes, endTimes[0].meridium);
-		if (calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime)) == -1)
-		{
-			string endTime_RoundedDown = "";
-			string endTime_RoundedUp = "";
-			if (endTimes[0].minutes.Equals("20"))
-			{
-				endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "00", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium);
+        string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[0].hour, startTimes[0].minutes, startTimes[0].meridium);
+        string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[0].hour, endTimes[0].minutes, endTimes[0].meridium);
+        if (calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime)) == -1)
+        {
+            string endTime_RoundedDown = "";
+            string endTime_RoundedUp = "";
+            if (endTimes[0].minutes.Equals("20"))
+            {
+                endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "00", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium);
 
-				int indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
-				calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
-			}
-			else if (endTimes[0].minutes.Equals("50"))
-			{
-				endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour + 1, "00", endTimes[0].meridium);
+                int indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
+                calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
+            }
+            else if (endTimes[0].minutes.Equals("50"))
+            {
+                endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour + 1, "00", endTimes[0].meridium);
 
-				int indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
-				calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
-			}
+                int indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
+                calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
+            }
 
-			ScheduleDataGridData = calendar;
-		}
-		myGrid.EndEditAsync();
-		StateHasChanged();
+            ScheduleDataGridData = calendar;
+        }
+        myGrid.EndEditAsync();
+        StateHasChanged();
 
-		myGrid.StartEditAsync();
-		UpdateDataGrid();
+        myGrid.StartEditAsync();
+        UpdateDataGrid();
 
-		myGrid.EndEditAsync();
-		StateHasChanged();
-		return;
-	}
+        myGrid.EndEditAsync();
+        StateHasChanged();
+        return;
+    }
 
-	protected override void OnInitialized()
-	{
-		//base.OnInitialized();
-		selectedClasses = new List<Class>();
-	}
+    protected override void OnInitialized()
+    {
+        //base.OnInitialized();
+        selectedClasses = new List<Class>();
+    }
 
-	public bool CompareClasses(Class value)
-	{
-		List<Class> conflictingClasses = new List<Class>(); //report these to error handler for a file-writeup
-															//True = Good / All Classes Are Set
-															// False = Bad / A Class Conflicts
-		if (selectedClasses != null) 
-		{
-			foreach (var key in selectedClasses)
-			{
-				//comparisons here; if comparisons 
-			}
-			//for (int i = 0; i < classes.Count - 1; i++)
-			//{
-			//	for (int j = i + 1; j < classes.Count; j++)
-			//	{
-			//		if (classes[i].StartTime < classes[j].EndTime && classes[j].StartTime < classes[i].EndTime)
-			//		{
-			//			conflictingClasses.Add(classes[i]);
-			//			conflictingClasses.Add(classes[j]);
-			//		}
-			//	}
-			//}
-		} else
-		{
-			return true;
-		}
-		return true;
-	}
-	
+    public bool CompareClasses(Class value)
+    {
+        List<Class> conflictingClasses = new List<Class>(); //report these to error handler for a file-writeup
+                                                            //True = Good / All Classes Are Set
+                                                            // False = Bad / A Class Conflicts
+        int valStartTime = int.Parse(value.GetStartTimes()[0].hour.ToString() + value.GetStartTimes()[0].minutes);
+        int valEndTime = int.Parse(value.GetEndTimes()[0].hour.ToString() + value.GetEndTimes()[0].minutes);
 
-	//public void SubmitClasses(Class classObj)
-	//{
-	//	classes.Add(classObj);
-	//		{
-	//			Id = int.Parse(classObj.GetClassID()),
-	//			Subject = classObj.GetClassName(),
-	//			//StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
-	//			//EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
-	//			CategoryColor = classObj.GetColor(),
-	//		};
-	//	//test.Add(appointment);
-	//}
-	//public void OnEventRendered(EventRenderedArgs<OrganizedCalendar> args)
-	//{
-	//	Dictionary<string, object> attributes = new Dictionary<string, object>();
-	//	if (CurrentView == View.Agenda)
-	//	{
-	//		attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
-	//	}
-	//	else
-	//	{
-	//		attributes.Add("style", "background: " + args.Data.CategoryColor);
-	//	}
-	//	args.Attributes = attributes;
-	//}
 
-	
+        if (selectedClasses != null)
+        {
+            for (int i = 0; i < selectedClasses.Count; i++)
+            {
+                int scStartTime = int.Parse(selectedClasses[i].GetStartTimes()[i].hour.ToString() + selectedClasses[i].GetStartTimes()[i].minutes);
+                int scEndTime = int.Parse(selectedClasses[i].GetEndTimes()[i].hour.ToString() + selectedClasses[i].GetEndTimes()[i].minutes);
+                if (value.GetDays()[i] == selectedClasses[i].GetDays()[i])
+                {
+                    if (valStartTime < scEndTime && scStartTime < valEndTime)
+                    {
+                        conflictingClasses.Add(selectedClasses[i]);
+                        conflictingClasses.Add(value);
+                        return false;
+                    }
+                }
+            }
+        } else
+        {
+            return true;
+        }
+        return true;
+    }
+
+
+    //public void SubmitClasses(Class classObj)
+    //{
+    //	classes.Add(classObj);
+    //		{
+    //			Id = int.Parse(classObj.GetClassID()),
+    //			Subject = classObj.GetClassName(),
+    //			//StartTime = classObj.GetStartTime(), //StartTime has Mistranslation when read in code
+    //			//EndTime = classObj.EndTime, //EndTime has Mistranslation when read in code
+    //			CategoryColor = classObj.GetColor(),
+    //		};
+    //	//test.Add(appointment);
+    //}
+    //public void OnEventRendered(EventRenderedArgs<OrganizedCalendar> args)
+    //{
+    //	Dictionary<string, object> attributes = new Dictionary<string, object>();
+    //	if (CurrentView == View.Agenda)
+    //	{
+    //		attributes.Add("style", "border-left-color: " + args.Data.CategoryColor);
+    //	}
+    //	else
+    //	{
+    //		attributes.Add("style", "background: " + args.Data.CategoryColor);
+    //	}
+    //	args.Attributes = attributes;
+    //}
+
+
 }
