@@ -296,7 +296,7 @@ namespace RecksWebservice.Data
 			return newClass;
 
 		}
-		private Class ProcessLabFromLine(string line) //Requires rework
+		private Class ProcessLabFromLine(string line)
 		{
 			Class createdClass = new();
 
