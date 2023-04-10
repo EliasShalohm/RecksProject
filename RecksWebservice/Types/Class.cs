@@ -19,28 +19,14 @@ namespace RecksWebservice.Types
 	}
 	#endregion
 
-	public class Time
-	{
-		public int day { get; set; }
-		public int hour { get; set; }
-		public string minutes { get; set; }
-		public string meridium { get; set; }
-		public Time(int day, int hour, string minutes, string meridium)
-		{
-			this.day = day;
-			this.hour = hour;
-			this.minutes = minutes;
-			this.meridium = meridium;
-		}
-	}
-
+#pragma warning disable IDE1006 // Naming Styles
 	public class Class
 	{
-		private int _totalEnrollCount;
-		private int _availableSlots;
-		private string _className = "";
-		private string _classID = "";
-		private string _classType = "";
+		private int _totalEnrollCount { get; set; }
+		private int _availableSlots { get; set; }
+		private string _className { get; set; } = "";
+		private string _classID { get; set; } = "";
+		private string _classType { get; set; } = "";
 		private int _section = 0;
 		private double _credits;
 		private string _courseTitle = "";
@@ -228,5 +214,6 @@ namespace RecksWebservice.Types
 
 	}
 
+#pragma warning restore IDE1006 // Naming Styles
 
 }

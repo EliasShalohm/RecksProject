@@ -14,13 +14,15 @@
 @using System.Reflection;
 @using static RecksWebservice.Types.ScheduleFiller;
 
-<select name="selected-class-item" id="selected-class" style="width: 250px; text-align:center;">
-	<option disabled selected>Selected Class</option>
-	@*@foreach (var part in selectedClasses)
+<select name="selected-class-item" id="selected-class" style="width: 250px; text-align:center;" @bind="@selectedClass">
+	<option selected="selected">Selected Class</option>
+	@foreach (Class? entry in selectedClasses)
 	{
-	<option value="part"></option>
-	}*@
+		string data = string.Format("{0} {1} Section:{2}", entry.GetClassName(), entry.GetClassID(), entry.GetSection());
+		<option value="@data">@data</option>
+	}
 </select>
+<p>@selectedClass</p>
 
 <div align="right" class="col-lg-12 control-section">
 	<SfGrid @ref="@myGrid" DataSource="@ScheduleDataGridData" onselect="">
@@ -55,7 +57,14 @@
 <br/>
 
 @code {
-	private List<Class>? selectedClasses { get; set; } = new();
+	string selectedClass = "";
+	string SelectedClassID
+	{
+		get => selectedClass;
+		set { selectedClass = value; }
+	}
+
+	private List<Class> selectedClasses { get; set; } = new();
 	private static ScheduleFiller scheduleFiller { get; set;} = new();
 	public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
 	public SfGrid<OrganizedCalendar> myGrid { get; set; }
@@ -76,10 +85,29 @@
 		myGrid.Refresh();
 	}
 
+	public void RemoveSelectedClass()
+	{
+		var splitInfo = selectedClass.Split(" ");
+		if (splitInfo.Length > 2) {
+			var section = int.Parse(splitInfo[2].Replace("Section:", ""));
+			var d = selectedClasses.Find(x => x.GetClassName().Equals(splitInfo[0]) && x.GetClassID().Equals(splitInfo[1]) && x.GetSection() == section);
+			selectedClasses.Remove(d);
+			//Cars.Where(x => x.Property1 == "Value" && x.Property2 == "Value2");
+
+			SelectedClassID = "Selected Class";
+			UpdateDataGrid();
+		}
+	}
+
 	public void ResetCalendar()
 	{
 		selectedClasses.Clear();
 		scheduleFiller.ResetCalendar();
+		WipeCalendar();
+	}
+
+	private void WipeCalendar()
+	{
 		List<Day> days = new List<Day> { Day.Monday, Day.Tuesday, Day.Wednesday, Day.Thursday, Day.Friday, Day.Saturday, Day.Sunday };
 		foreach (var day in days)
 		{
@@ -108,12 +136,47 @@
 		return entry;
 	}
 
+	private void UpdateDataGrid()
+	{
+		List<OrganizedCalendar?> calendar = scheduleFiller.GetCalendar();
+		WipeCalendar();
+
+		foreach (var entry in selectedClasses) {
+			Time[] startTimes = entry.GetStartTimes().ToArray();
+			Time[] endTimes = entry.GetEndTimes().ToArray();
+
+			string combinedStartTime = string.Format("{0}:{1} {2}", startTimes[0].hour, startTimes[0].minutes, startTimes[0].meridium);
+			string combinedEndTime = string.Format("{0}:{1} {2}", endTimes[0].hour, endTimes[0].minutes, endTimes[0].meridium);
+
+			myGrid.StartEditAsync();
+			for (int i = 0; i < startTimes.Length; i++)
+			{
+				int dayNumber = startTimes[i].day;
+				Console.WriteLine("StartTime: " + combinedStartTime + " EndTime: " + combinedEndTime);
+				foreach (Day day in entry.GetDays())
+				{
+
+					int startIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedStartTime);
+					int endIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedEndTime);
+
+					for (int j = startIndex; j <= endIndex; j++)
+					{
+						string? value = string.Format("{0}{1} Section {2}", entry.GetClassName(), entry.GetClassID(), entry.GetSection());
+
+						PropertyInfo info = ScheduleDataGridData[j].GetType().GetProperty(day.ToString());
+						info.SetValue(ScheduleDataGridData[j], value);
+					}
+				}
+			}
+		}
+
+	}
 
 	public void ProcessClassTimes(Class entry)
 	{
 		//entry = TestPremadeClass();
 
-		var calendar = scheduleFiller.GetCalendar();
+		List<OrganizedCalendar?> calendar = scheduleFiller.GetCalendar();
 		Time[] startTimes = entry.GetStartTimes().ToArray();
 		Time[] endTimes = entry.GetEndTimes().ToArray();
 
@@ -127,14 +190,14 @@
 			{
 				endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "00", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium);
 
-				var indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
+				int indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
 				calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
 			}
 			else if (endTimes[0].minutes.Equals("50"))
 			{
 				endTime_RoundedDown = string.Format("{0}:{1} {2}", endTimes[0].hour, "30", endTimes[0].meridium); //endTime_RoundedUp = string.Format("{0}:{1} {2}", endTimes[0].hour + 1, "00", endTimes[0].meridium);
 
-				var indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
+				int indexOfTime = calendar.IndexOf(calendar.Find(x => x.Time == endTime_RoundedDown)) + 1;
 				calendar.Insert(indexOfTime, new OrganizedCalendar() { Time = combinedEndTime });
 			}
 
@@ -144,29 +207,8 @@
 		StateHasChanged();
 
 		myGrid.StartEditAsync();
-		for (int i = 0; i < startTimes.Length; i++)
-		{
-			var dayNumber = startTimes[i].day;
-			Console.WriteLine("StartTime: " + combinedStartTime + " EndTime: " + combinedEndTime);
-			foreach (var day in entry.GetDays())
-			{
+		UpdateDataGrid();
 
-				//int startIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedStartTime));
-				int startIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedStartTime);
-				//int endIndex = calendar.IndexOf(calendar.Find(x => x.Time == combinedEndTime));
-				int endIndex = ScheduleDataGridData.FindIndex(x => x.Time == combinedEndTime);
-
-
-				for (int j = startIndex; j <= endIndex; j++)
-				{
-					var value = string.Format("{0}{1} Section {2}", entry.GetClassName(), entry.GetClassID(), entry.GetSection());
-
-					PropertyInfo info = ScheduleDataGridData[j].GetType().GetProperty(day.ToString());
-					info.SetValue(ScheduleDataGridData[j], value);
-				}
-			}
-		}
-		
 		myGrid.EndEditAsync();
 		StateHasChanged();
 		return;
