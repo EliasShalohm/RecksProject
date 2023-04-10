@@ -51,11 +51,11 @@ namespace RecksWebservice.Data
 				Console.WriteLine("There are no courses found for this Semester / Department combination: {0} & {1}", Semester, Department);
 		}
 
-		private void FillClassData(string htmlData, string Semester, string Department)
+		private void FillClassData(string htmlData, string semester, string department)
 		{
 			//Console.WriteLine(htmlData); //For testing class values.
 
-			var semesterSplit = Semester.Split(' ');
+			var semesterSplit = semester.Split(' ');
 			int startIndex = htmlData.LastIndexOf("--");
 			string toMatch = "";
 			for (int i = 0; i < semesterSplit.Length - 1; i++)
@@ -63,7 +63,7 @@ namespace RecksWebservice.Data
 				toMatch += semesterSplit[i] + " ";
 			}
 			toMatch += " " + semesterSplit[semesterSplit.Length - 1]; 
-			int endIndex = htmlData.IndexOf(toMatch + "   " + Department);
+			int endIndex = htmlData.IndexOf(toMatch + "   " + department);
 
 			//The "+2" Neglects to include the "--" as starting index; for easier reading.
 			Console.WriteLine(startIndex + "   " +  endIndex + toMatch);

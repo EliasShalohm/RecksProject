@@ -3,10 +3,10 @@ using System.Diagnostics;
 
 namespace RecksWebservice.Data
 {
-	public class ErrorHandler
+	public static class ErrorHandler
 	{
 		//Todo: Make it write to .txt file
-		public void ReportConflictingClasses(List<Class> conflictingClasses)
+		public static void ReportConflictingClasses(List<Class> conflictingClasses)
 		{
 			foreach (Class classObj in conflictingClasses)
 			{

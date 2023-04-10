@@ -21,12 +21,15 @@
 
 @inject RMPDataHandler RMPHandler
 
-<h3>RateMyProfessor Data</h3>
+@*<h3>RateMyProfessor</h3>
+*@
+
+<h3>Professor Details</h3>
 
 <div class="search">
     <p>Search for a professor:</p>
     <input type="text" @bind-value="@selectedProfessor" />
-    <button @onclick="GetProfessorData">Get Professor Data</button>
+    <button @onclick="GetProfessorData">Get Professor Rating</button>
 </div>
 
 <div class="data">
@@ -38,7 +41,7 @@
 
 @code {
     private RMPDataHandler rmpDataHandler = new RMPDataHandler();
-    private string selectedProfessor;
+    private string selectedProfessor = "Patti Aymond";
     private string professorName;
     private string className;
     private int rating;
@@ -48,7 +51,7 @@
     private async Task GetProfessorData()
     {
         professorName = null;
-        rating = 0;
+        rating = -1;
         await rmpDataHandler.GetProfessorData(selectedProfessor);
         professorName = selectedProfessor;
         rating = rmpDataHandler.GetProfessorRating();
@@ -57,6 +60,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Run(() => classDataHandler.GetBookletData());
+        ///Just a test
+        await GetProfessorData();
     }
 }
