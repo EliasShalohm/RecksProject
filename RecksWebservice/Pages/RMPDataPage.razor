@@ -26,11 +26,10 @@
 <div class="search">
     <p>Search for a professor:</p>
     <input type="text" @bind-value="@selectedProfessor" />
-    <button @onclick="GetProfessorData">Search</button>
+    <button @onclick="GetProfessorData">Get Professor Data</button>
 </div>
 
 <div class="data">
-    <button @onclick="GetProfessorData">Get Professor Data</button>
     <p>Professor Name: @professorName</p>
     <p>Class Name: @className</p>
     <p>Rating: @rating</p>
