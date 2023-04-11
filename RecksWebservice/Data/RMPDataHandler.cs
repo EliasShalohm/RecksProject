@@ -80,6 +80,39 @@ namespace RecksWebservice.Data
                 case "dr. wang":
                     rating = 4.8;
                     break;
+                case "mary manheim":
+                    rating = 3.8;
+                    break;
+                case "mark zucker":
+                    rating = 4.5;
+                    break;
+                case "stan hilton":
+                    rating = 3.2;
+                    break;
+                case "david lindenfield":
+                    rating = 3.5;
+                    break;
+                case "david anderson":
+                    rating = 4.4;
+                    break;
+                case "james bowers":
+                    rating = 4.8;
+                    break;
+                case "charles johnson":
+                    rating = 5.0;
+                    break;
+                case "linda bui":
+                    rating = 3.8;
+                    break;
+                case "femi euba":
+                    rating = 2.7;
+                    break;
+                case "rahul shah":
+                    rating = 2.5;
+                    break;
+                case "shah":
+                    rating = 2.5;
+                    break;
                 default:
                     rating = -1;
                     break;
