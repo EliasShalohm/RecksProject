@@ -22,26 +22,26 @@ namespace RecksWebservice.Types
 #pragma warning disable IDE1006 // Naming Styles
 	public class Class
 	{
-		private int _totalEnrollCount { get; set; }
-		private int _availableSlots { get; set; }
-		private string _className { get; set; } = "";
-		private string _classID { get; set; } = "";
-		private string _classType { get; set; } = "";
-		private int _section = 0;
-		private double _credits;
-		private string _courseTitle = "";
-		private List<Time> _startTimes;
-		private List<Time> _endTimes;
-		private List<Day> _days;
-		private bool _isFull;
-		private bool _isNightClass;
-		private List<Class> _labs;
-		private Professor _professor;
-		private bool _isTBAClass = false;
-		private string _specialEnrollment;
-		private string _roomNumber;
-		private string _courseBuilding;
-		private string _colour;
+		public int _totalEnrollCount { get; set; }
+		public int _availableSlots { get; set; }
+		public string _className { get; set; } = "";
+		public string _classID { get; set; } = "";
+		public string _classType { get; set; } = "";
+		public int _section = 0;
+		public double _credits;
+		public string _courseTitle = "";
+		public List<Time> _startTimes;
+		public List<Time> _endTimes;
+		public List<Day> _days;
+		public bool _isFull;
+		public bool _isNightClass;
+		public List<Class> _labs;
+		public Professor _professor;
+		public bool _isTBAClass = false;
+		public string _specialEnrollment;
+		public string _roomNumber;
+		public string _courseBuilding;
+		public string _colour;
 
 		/// <summary>
 		/// Constructors
