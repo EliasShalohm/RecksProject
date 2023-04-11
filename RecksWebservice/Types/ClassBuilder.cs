@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace RecksWebservice.Types
 {
-    public abstract class ClassBuilder : ClassDataHandler
+    public abstract class ClassBuilder : Class
     {
         protected Class classObject;
         public abstract void SetTotalEnrollCount();

@@ -5,83 +5,83 @@ namespace RecksWebservice.Types
 	{
         public override void SetTotalEnrollCount()
         {
-            classObject._totalEnrollCount = 0;
+            classObject._totalEnrollCount = GetTotalEnrollCount();
         }
         public override void SetAvailableSlots()
         {
-            classObject._availableSlots = 0;
+            classObject._availableSlots = GetAvailableSlots();
         }
         public override void SetClassName()
         {
-            classObject._className = "";
+            classObject._className = GetClassName();
         }
         public override void SetClassID()
         {
-            classObject._classID = "";
+            classObject._classID = GetClassID();
         }
         public override void SetClassType()
         {
-            classObject._classType = "";
+            classObject._classType = GetClassType();
         }
         public override void SetSection()
         {
-            classObject._section = 0;
+            classObject._section = GetSection();
         }
         public override void SetCredits()
         {
-            classObject._credits = 0;
+            classObject._credits = GetCredits();
         }
         public override void SetCourseTitle()
         {
-            classObject._courseTitle = "";
+            classObject._courseTitle = GetCourseTitle();
         }
         public override void SetStartTimes()
         {
-            //classObject._startTimes = 
+            classObject._startTimes = GetStartTimes();
         }
         public override void SetEndTimes()
         {
-            //classObject._endTimes = 
+            classObject._endTimes = GetEndTimes();
         }
         public override void SetDays()
         {
-            //classObject._days =
+            classObject._days = GetDays();
         }
         public override bool SetIsFull()
         {
-            return false;
+            return GetFullState();
         }
         public override bool SetIsNightClass()
         {
-            return false;
+            return CheckNightClassState();
         }
         public override void SetLabs()
         {
-            //classObject._labs =
+            classObject._labs = GetLabs();
         }
         public override void SetProfessor()
         {
-            //classObject._professor =
+            classObject._professor = GetProfessor();
         }
         public override bool SetTBAClass()
         {
-            return false;
+            return GetTBAStatus();
         }
         public override void SetSpecialEnrollment()
         {
-            classObject._specialEnrollment = "";
+            classObject._specialEnrollment = GetSpecialEnrollment();
         }
         public override void SetRoomNumber()
         {
-            classObject._roomNumber = "";
+            classObject._roomNumber = GetRoomNumber();
         }
         public override void SetCourseBuilding()
         {
-            classObject._courseBuilding = "";
+            classObject._courseBuilding = GetCourseBuilding();
         }
         public override void SetColor()
         {
-            classObject._colour = "";
+            classObject._colour = GetColor();
         }
     }
 }

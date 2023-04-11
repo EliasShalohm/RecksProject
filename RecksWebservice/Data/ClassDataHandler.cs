@@ -322,6 +322,18 @@ namespace RecksWebservice.Data
 			}
 			return createdClass;
 		}
-		
+
+		public static IEnumerator<string> CourseDesc(string Courseline)
+		{
+			int cIndex = 0;
+			int nIndex;
+			while ((nIndex = Courseline.IndexOf(' ', cIndex + 1)) != -1)
+			{
+				int sIndex = (cIndex == 0 ? 0 : cIndex + 1);
+				yield return Courseline.Substring(sIndex, nIndex - sIndex);
+				cIndex = nIndex;
+			}
+			yield return Courseline.Substring(cIndex + 1);
+		}
 	}
 }
