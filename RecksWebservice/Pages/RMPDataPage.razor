@@ -33,27 +33,24 @@
 </div>
 
 <div class="data">
-    <p>Professor Name: @professorName</p>
-    <p>Class Name: @className</p>
+    <p>Professor Name: @selectedProfessor.ToUpper()</p>
+    @*<p>Class Name: @className</p>*@
     <p>Rating: @rating</p>
-    <p>Number of Ratings: @numRatings</p>
+   @* <p>Number of Ratings: @numRatings</p>*@
 </div>`
 
 @code {
     private RMPDataHandler rmpDataHandler = new RMPDataHandler();
     private string selectedProfessor = "Patti Aymond";
-    private string professorName;
     private string className;
-    private int rating;
+    private double rating;
     private string numRatings;
 
 
     private async Task GetProfessorData()
     {
-        professorName = null;
         rating = -1;
         await rmpDataHandler.GetProfessorData(selectedProfessor);
-        professorName = selectedProfessor;
         rating = rmpDataHandler.GetProfessorRating();
         //numRatings = rmpDataHandler.GetNumRatings();
     }

@@ -8,7 +8,7 @@
 @inject ClassDataHandler classDataHandler
 @inject ClassScheduler classScheduler
 @page "/booklet"
-<link href="/css/booklet.css" rel="stylesheet" /> <!--Referencing CSS File For Booklet-->
+<link href="/css/booklet.css" rel="stylesheet" />
 
 <PageTitle>LSU Booklet</PageTitle>
 
@@ -30,7 +30,7 @@
 					<option disabled selected>Semester</option>
 					@foreach (var semester in semesterList)
 					{
-						string semesterName = semester.ToString(); //Prevents calling .ToString() more than once.
+						string semesterName = semester.ToString();
 						<option value="@semesterName">@semesterName</option>
 					}
 				</select>
@@ -40,14 +40,12 @@
 					<option disabled selected>Department</option>
 					@foreach (var department in departmentList)
 					{
-						string departmentName = department.ToString(); //Prevents calling .ToString() more than once.
+						string departmentName = department.ToString();
 						<option value="@departmentName">@departmentName</option>
 					}
 				</select>
 				
 			</div>
-			<!--<div class="col-md-4">
-			</div>-->
 		</div>
 		<div class="row">
 			<div id="class-data" class="col-md-6">
@@ -103,7 +101,6 @@
     private List<string> semesterList = new();
     private List<string> departmentList = new();
     private Dictionary<int, Class> classList = new();
-    private List<Class> userPickedClasses = new();
     private string _selectedSemester = "";
     private string _selectedDepartment = "";
     private string _selectedClass = "";
@@ -125,8 +122,6 @@
     }
     [Parameter]
     public EventCallback<string> BindingValueChanged { get; set; }
-
-
 
     #region Select and Fill Methods
     /// <summary>
@@ -174,10 +169,6 @@
             classScheduler.ProcessClass(value);
             value.GetProfessor();
         }
-    }
-    public void RemoveClassFromSchedule()
-    {
-
     }
 
     protected override async Task OnInitializedAsync()

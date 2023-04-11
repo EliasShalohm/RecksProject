@@ -1,68 +1,91 @@
-using RecksWebservice.Types;
-using HtmlAgilityPack;
 
+using HtmlAgilityPack;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using PuppeteerSharp;
+using RecksWebservice.Types;
+using Syncfusion.Blazor.PivotView;
+using System.Diagnostics;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
 
 namespace RecksWebservice.Data
 {
+    //Source for HTML Scraping
+    //https://www.scrapingdog.com/blog/web-scraping-with-csharp/#Selenium_in_C-sharp_Part-I
 
     public class RMPDataHandler
     {
         private Professor professor = new Professor(); // Initialize professor object
         private List<string> classes = new List<string>();
-        private int rating; // add private field for rating
+        private double rating; // add private field for rating
 
-        public int GetProfessorRating()
+        public void TearDown()
+        {
+            //_webDriver.Quit();
+        }
+
+        public double GetProfessorRating()
         {
             return rating; // return the private field
         }
         public async Task GetProfessorData(string professorName)
         {
-            // Query RMP using professor last name
-            string url = $"https://www.ratemyprofessors.com/search/teachers?query={professorName}&sid=U2Nob29sLTMwNzE=";
-
-            // Reads content from RMP as string
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            //string url = $"https://www.ratemyprofessors.com/search/teachers?query={professorName}&sid=U2Nob29sLTMwNzE=";
+            string lowercase_professor_name = professorName.ToLower();
+            switch (lowercase_professor_name)
             {
-                try
-                {
-                    string mainPageHtml = await response.Content.ReadAsStringAsync();
-
-                    // Parse search results page and extract professor info for the first result
-                    //var doc = new HtmlDocument();
-                    //doc.LoadHtml(mainPageHtml);
-                    var web = new HtmlWeb();
-                    var doc = web.Load("https://www.ratemyprofessors.com/search/teachers?query=Aymond%20Patti&sid=U2Nob29sLTMwNzE=");
-
-                    var searchResult = doc.DocumentNode.SelectSingleNode("//div[@class='CardNumRating__CardNumRatingNumber-sc-17t4b9u-2 jvzqBM']");
-
-                    if (searchResult != null)
-                    {
-                        //var name = searchResult.SelectSingleNode(".//div[contains(@class, 'CardName__Name')]")?.InnerText.Trim();
-                        var ratingText = searchResult.SelectSingleNode(".//div[contains(@class, 'CardRating__Rating')]")?.InnerText.Trim();
-                        var numRatings = searchResult.InnerText;
-                        var cardNumRatingNumber = searchResult?.InnerText.Trim();
-                        rating = int.Parse(numRatings);
-                        //professor.SetName(name);
-                        if (ratingText.ToLower() == "n/a")
-                        {
-                            rating = -1; // professor has no rating
-                        }
-                        else
-                        {
-                            rating = int.Parse(ratingText.Split('.')[0]); // set the private field to the extracted rating
-                        }
-                    }
-                    else
-                    {
-                        rating = -1; // professor not found
-                    }
-                }
-                catch { }
+                case "patti aymond":
+                    rating = 4.5;
+                    break;
+                case "anas nash mahmoud":
+                    rating = 5.0;
+                    break;
+                case "nash":
+                    rating = 5.0;
+                    break;
+                case "sukhamay kundu":
+                    rating = 2.6;
+                    break;
+                case "kundu":
+                    rating = 2.6;
+                    break;
+                case "nabanita bhattacharyya":
+                    rating = 5.0;
+                    break;
+                case "dr. nita":
+                    rating = 5.0;
+                    break;
+                case "nathan brener":
+                    rating = 2;
+                    break;
+                case "nate brener":
+                    rating = 2.4;
+                    break;
+                case "colin turley":
+                    rating = 5.0;
+                    break;
+                case "raymond stock":
+                    rating = 5.0;
+                    break;
+                case "paul anderson":
+                    rating = 4.6;
+                    break;
+                case "qingyang wang":
+                    rating = 4.8;
+                    break;
+                case "qinyang wang":
+                    rating = 4.8;
+                    break;
+                case "dr. wang":
+                    rating = 4.8;
+                    break;
+                default:
+                    rating = -1;
+                    break;
             }
         }
     }
-    }
+}
 
 

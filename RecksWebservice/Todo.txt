@@ -1,8 +1,6 @@
 ﻿* Display "Classes added" list
-Fall 2023 -> ART -> Index 18
-
-[] Fix bug when re-selecting department, the classes list is emptied
-[] Fix re-added semester & department data every refresh. Find a way to get the control ID and force a clear.
+* Display Currently-Scheduled Credit Hours
+- Fix crash when reselecting booklet.
 
 * New Page for Displaying A Live-Drawn Schedule
 	o Preview Schedule in Other Tab?
