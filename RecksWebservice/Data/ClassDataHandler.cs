@@ -335,5 +335,81 @@ namespace RecksWebservice.Data
 			}
 			yield return Courseline.Substring(cIndex + 1);
 		}
-	}
+
+        public abstract class Aggregate
+        {
+            public abstract Iterator CreateIterator();
+        }
+        /// <summary>
+        /// The 'ConcreteAggregate' class
+        /// </summary>
+        public class InfoCollection : Aggregate
+        {
+            List<object> info = new List<object>();
+            private InfoCollection infoCollection;
+            public override Iterator CreateIterator()
+            {
+                return new InfoIterator(this);
+            }
+            // Get item count
+            public int Count
+            {
+                get { return info.Count; }
+            }
+            // Indexer
+            public object this[int index]
+            {
+                get { return info[index]; }
+                set { info.Insert(index, value); }
+            }
+        }
+        /// <summary>
+        /// The 'Iterator' abstract class
+        /// </summary>
+        public abstract class Iterator
+        {
+            public abstract object First();
+            public abstract object Next();
+            public abstract bool IsDone();
+            public abstract object CurrentInfo();
+        }
+        /// <summary>
+        /// The 'ConcreteIterator' class
+        /// </summary>
+        public class InfoIterator : Iterator
+        {
+            InfoCollection aggregate;
+            int current = 0;
+            // Constructor
+            public InfoIterator(InfoCollection aggregate)
+            {
+                this.aggregate = aggregate;
+            }
+            // Gets first iteration item
+            public override object First()
+            {
+                return aggregate[0];
+            }
+            // Gets next iteration item
+            public override object Next()
+            {
+                object ret = null;
+                if (current < aggregate.Count - 1)
+                {
+                    ret = aggregate[++current];
+                }
+                return ret;
+            }
+            // Gets current iteration item
+            public override object CurrentInfo()
+            {
+                return aggregate[current];
+            }
+            // Gets whether iterations are complete
+            public override bool IsDone()
+            {
+                return current >= aggregate.Count;
+            }
+        }
+    }
 }
