@@ -14,15 +14,19 @@
 @using System.Reflection;
 @using static RecksWebservice.Types.ScheduleFiller;
 
+<link href="/css/ClassScheduler.css" rel="stylesheet" />
+<div class="select">
 <select name="selected-class-item" id="selected-class" style="width: 250px; text-align:center;" @bind="@selectedClass">
 	<option selected="selected">Selected Class</option>
 	@foreach (Class? entry in selectedClasses)
 	{
 		string data = string.Format("{0} {1} Section:{2}", entry.GetClassName(), entry.GetClassID(), entry.GetSection());
 		<option value="@data">@data</option>
-	}
+        }
 </select>
+</div>
 <p>@selectedClass</p>
+<p>@totalHours Total Credit Hours </p>
 
 
 <div align="right" class="col-lg-12 control-section">
@@ -70,6 +74,7 @@
     public List<OrganizedCalendar> ScheduleDataGridData = scheduleFiller.GetCalendar();
     public SfGrid<OrganizedCalendar> myGrid { get; set; }
     public string cellValue { get; set; }
+    public double totalHours { get; set; }
 
     public void ProcessClass(Class entry)
     {
@@ -78,6 +83,7 @@
         {
             selectedClasses.Add(entry);
             ProcessClassTimes(entry);
+            displayHours();
         }
         else
         {
@@ -251,6 +257,15 @@
             return true;
         }
         return true;
+    }
+
+    public void displayHours()
+    {
+        totalHours = 0;
+        for (int i = 0; i < selectedClasses.Count(); i++)
+        {
+            totalHours += selectedClasses[i].GetCredits();
+        }
     }
 
 

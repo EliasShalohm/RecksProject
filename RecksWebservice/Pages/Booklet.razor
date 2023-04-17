@@ -20,7 +20,7 @@
 		<div class="row">
 			<div id="header-text" class="col-md-12">
 				<h1 class="text-center">
-					LSU BOOKLET AND CLASS SCHEDULER
+					LSU BOOKLET AND PERSONAL SCHEDULE
 				</h1>
 			</div>
 		</div>
@@ -81,16 +81,14 @@
 
 			<h5 style="font-style:italic;font-size:small;">@_selectedClass</h5>
 
-			<h3>Class Scheduler</h3>
+			<h3>Personal Schedule</h3>
             <div align="center">
 			    <button class="buttons" @onclick="AddClassToSchedule">Add Class</button>
                 <button class="buttons" @onclick="classScheduler.RemoveSelectedClass">Remove Selected Class</button>
                 <button class="buttons" @onclick="classScheduler.ResetCalendar">Reset Classes</button>
              </div>
-
-			<ClassScheduler/>
+            <ClassScheduler/>
             <RMPDataPage/>
-
 		</div>
 	</div>
 
@@ -179,6 +177,6 @@
         departmentList = classDataHandler.GetDepartments();
     }
 
-    
+
     //After code block execution, semester & department lists should automatically fill themselves out accordingly.
 } 
